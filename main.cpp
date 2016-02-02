@@ -1,36 +1,22 @@
-#include <GLFW/glfw3.h>
+#include "GlfwContext.h"
+#include "GlfwWindow.h"
 
-int main(void)
-{
-	GLFWwindow* window;
+int main() {
+	RunFragment::GlfwContext context;
+	RunFragment::GlfwWindow window {"Run fragment", 640, 480};
 
-	/* Initialize the library */
-	if (!glfwInit())
-		return -1;
-
-	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-	if (!window)
-	{
-		glfwTerminate();
-		return -1;
-	}
-
-	/* Make the window's context current */
-	glfwMakeContextCurrent(window);
+	window.makeCurrent();
 
 	/* Loop until the user closes the window */
-	while (!glfwWindowShouldClose(window))
-	{
+	while(!window.isEnd()) {
 		/* Render here */
 
 		/* Swap front and back buffers */
-		glfwSwapBuffers(window);
+		window.swapBuffers();
 
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
 
-	glfwTerminate();
 	return 0;
 }
