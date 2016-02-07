@@ -8,6 +8,8 @@ add_subdirectory(efsw)
 include_directories(efsw/include)
 
 find_package(Boost REQUIRED COMPONENTS program_options)
+find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
 add_definitions(-std=c++11)
