@@ -1,13 +1,8 @@
 #pragma once
 
-#include <utility>
-
 #include <boost/optional.hpp>
-#include <boost/program_options/variables_map.hpp>
 
 namespace RunFragment {
-
-namespace po = boost::program_options;
 
 struct Configuration {
 	boost::optional<std::string> file;
