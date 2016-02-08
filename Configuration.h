@@ -10,6 +10,7 @@ struct Configuration {
 	std::string file;
 	float time;
 	boost::optional<std::string> main;
+	bool addUniforms;
 
 	std::string iResolution;
 	std::string iGlobalTime;

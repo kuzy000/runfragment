@@ -192,6 +192,20 @@ void Application::reloadFile() {
 	
 	if(file.is_open()) {
 		std::stringstream ss;
+		
+		if(config.addUniforms) {
+			ss << "uniform vec2      " + config.iResolution + ";" << std::endl
+			   << "uniform float     " + config.iGlobalTime + ";" << std::endl
+			   << "uniform float     " + config.iGlobalDelta + ";" << std::endl
+			   << "uniform float     " + config.iGlobalFrame + ";" << std::endl
+			   << "uniform float     " + config.iChannelTime + "[4];" << std::endl
+			   << "uniform vec4      " + config.iMouse + ";" << std::endl
+			   << "uniform vec4      " + config.iDate + ";" << std::endl
+			   << "uniform float     " + config.iSampleRate + ";" << std::endl
+			   << "uniform vec3      " + config.iChannelResolution + "[4];" << std::endl;
+//			   << "uniform samplerXX " + config.iChanneli + ";" << std::endl;
+		}
+		
 		ss << file.rdbuf();
 		
 		if(config.main != boost::none) {

@@ -13,6 +13,7 @@ const std::string shaderToy =
 R"raw(
 time = 1
 main = mainImage
+add-uniforms = true
 
 iResolution = iResolution
 iGlobalTime = iGlobalTime
@@ -30,6 +31,7 @@ iSurfacePosition = iSurfacePosition
 const std::string glslSandbox =  R"raw(
 time = 1
 main = none
+add-uniforms = false
 
 iResolution = resolution
 iGlobalTime = time
@@ -89,12 +91,13 @@ po::variables_map parseArguments(int argc, char* argv[], po::options_description
 int main(int argc, char* argv[]) {
 	po::options_description gen;
 	gen.add_options()
-		("file",     po::value<std::string>(), "Input file")
-		("config,c", po::value<std::string>(), "Config file")
-		("time,t",   po::value<float>(),       "Set value that multiplies the time")
-		("main",     po::value<std::string>(), "Set name of mainImage(out vec4 fragColor, in vec2 fragCoord) function; none if not used")
-		("help,h",                             "Display help message")
-		("format,f", po::value<std::string>(), "Format of uniforms:\n    g : GLSLSandbox\n    s : ShaderToy (default)");
+		("file",         po::value<std::string>(),                "Input file")
+		("config,c",     po::value<std::string>(),                "Config file")
+		("time,t",       po::value<float>(),                      "Set value that multiplies the time")
+		("main",         po::value<std::string>(),                "Set name of mainImage(out vec4 fragColor, in vec2 fragCoord) function; none if not used")
+		("add-uniforms", po::bool_switch()->default_value(false), "Add uniforms to begining of the file")
+		("help,h",                                                "Display help message")
+		("format,f",     po::value<std::string>(),                "Format of uniforms:\n    g : GLSLSandbox\n    s : ShaderToy (default)");
 
 	po::options_description uni;
 	uni.add_options()
@@ -130,6 +133,7 @@ int main(int argc, char* argv[]) {
 		return EXIT_SUCCESS;
 	}
 	
+	
 	RunFragment::Configuration config;
 	
 	config.file = vm["file"].as<std::string>();
@@ -140,6 +144,7 @@ int main(int argc, char* argv[]) {
 	else {
 		config.main = boost::none;
 	}
+	config.addUniforms = vm["add-uniforms"].as<bool>();
 
 	config.iResolution = vm["iResolution"].as<std::string>();
 	config.iGlobalTime = vm["iGlobalTime"].as<std::string>();

@@ -18,5 +18,4 @@ private:
 	std::function<void(efsw::WatchID, const std::string&, const std::string&, efsw::Action, std::string)> callback;
 };
 
-
 }
