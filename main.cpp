@@ -79,7 +79,7 @@ po::variables_map parseArguments(int argc, char* argv[], po::options_description
 		po::store(po::parse_config_file(ss, desc, true), vm);
 	}
 	
-	if(!vm.count("file")) {
+	if(!vm.count("file") && !vm.count("help")) {
 		throw std::runtime_error {"file doesn't specified; try '--help'"};
 	}
 	
