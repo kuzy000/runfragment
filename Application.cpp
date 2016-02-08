@@ -8,6 +8,7 @@
 #include <iostream>
 #include <memory>
 #include <regex>
+#include <ctime>
 
 #include <efsw/efsw.hpp>
 
@@ -143,8 +144,8 @@ void Application::onWindowResize(GLFWwindow*, int width, int height) {
 void Application::render() {
 	reloadShader();
 	
-	GLfloat time = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(std::chrono::high_resolution_clock::now() - startTime).count();
-	glUniform1f(iGlobalTime, time);
+	GLfloat globalTime = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(std::chrono::high_resolution_clock::now() - startTime).count();
+	glUniform1f(iGlobalTime, globalTime);
 	
 	int width;
 	int height;
@@ -155,6 +156,24 @@ void Application::render() {
 	double y;
 	glfwGetCursorPos(window, &x, &y);
 	glUniform2f(iMouse, static_cast<GLfloat>(1. - x / width), static_cast<GLfloat>(y / height));
+	
+	time_t stamp = time(nullptr);
+	tm* now = localtime(&stamp);
+	GLfloat year = now->tm_year + 1900;
+	GLfloat month = now->tm_mon;
+	GLfloat day = now->tm_mday;
+	GLfloat sec = [] {
+		time_t t1, t2;
+		struct tm tms;
+		time(&t1);
+		localtime_r(&t1, &tms);
+		tms.tm_hour = 0;
+		tms.tm_min = 0;
+		tms.tm_sec = 0;
+		t2 = mktime(&tms);
+		return t1 - t2;
+	} ();
+	glUniform4f(iDate, year, month, day, sec);
 	
 	glClearColor(0.f, 0.f, 0.f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT);

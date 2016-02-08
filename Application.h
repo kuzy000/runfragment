@@ -45,7 +45,7 @@ private:
 	GLint iGlobalFrame = -1;
 	GLint iChannelTime = -1;
 	GLint iMouse = -1; // done
-	GLint iDate = -1;
+	GLint iDate = -1; // done
 	GLint iSampleRate = -1;
 	GLint iChannelResolution = -1;
 	GLint iChanneli = -1;
