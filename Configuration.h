@@ -1,11 +1,11 @@
 #pragma once
 
-#include <boost/optional.hpp>
+#include <string>
 
 namespace RunFragment {
 
 struct Configuration {
-	boost::optional<std::string> file;
+	std::string file;
 	float time;
 
 	std::string iResolution;
@@ -18,6 +18,7 @@ struct Configuration {
 	std::string iSampleRate;
 	std::string iChannelResolution;
 	std::string iChanneli;
+	std::string iSurfacePosition;
 };
 
 }

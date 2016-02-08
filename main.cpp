@@ -6,10 +6,8 @@
 #include <boost/program_options/positional_options.hpp>
 #include <boost/program_options/variables_map.hpp>
 
-#include "GlfwContext.h"
-#include "GlfwWindow.h"
+#include "Application.h"
 #include "Configuration.h"
-
 
 const std::string shaderToy = 
 R"raw(
@@ -25,6 +23,7 @@ iDate = iDate
 iSampleRate = iSampleRate
 iChannelResolution = iChannelResolution
 iChanneli = iChanneli
+iSurfacePosition = iSurfacePosition
 )raw";
 
 const std::string glslSandbox =  R"raw(
@@ -40,10 +39,50 @@ iDate = iDate
 iSampleRate = iSampleRate
 iChannelResolution = iChannelResolution
 iChanneli = iChanneli
+iSurfacePosition = surfacePosition
 )raw";
 
 
 namespace po = boost::program_options;
+
+po::variables_map parseArguments(int argc, char* argv[], po::options_description desc) {
+	po::positional_options_description pos;
+	pos.add("file", 1);
+
+	po::variables_map vm;
+	auto parser = po::command_line_parser(argc, argv).options(desc).positional(pos);
+	po::store(parser.run(), vm);
+	
+	if(vm.count("config")) {
+		std::ifstream iniFile {vm["config"].as<std::string>()};
+		po::store(po::parse_config_file(iniFile, desc, true), vm);  
+	}
+	
+	if(vm.count("format")) {
+		auto arg = vm["format"].as<std::string>();
+		if(arg == "s") {
+			std::istringstream ss {shaderToy};
+			po::store(po::parse_config_file(ss, desc, true), vm);
+		}
+		else if(arg == "g") {
+			std::istringstream ss {glslSandbox};
+			po::store(po::parse_config_file(ss, desc, true), vm);
+		}
+		else {
+			throw std::runtime_error {"invalid argument of '--format'"};
+		}
+	}
+	else {
+		std::istringstream ss {shaderToy};
+		po::store(po::parse_config_file(ss, desc, true), vm);
+	}
+	
+	if(!vm.count("file")) {
+		throw std::runtime_error {"file doesn't specified; try '--help'"};
+	}
+	
+	return vm;
+}
 
 int main(int argc, char* argv[]) {
 	po::options_description gen;
@@ -65,21 +104,18 @@ int main(int argc, char* argv[]) {
 		("iDate",              po::value<std::string>(), "Set name of iDate uniform")
 		("iSampleRate",        po::value<std::string>(), "Set name of iSampleRate uniform")
 		("iChannelResolution", po::value<std::string>(), "Set name of iChannelResolution uniform")
-		("iChanneli",          po::value<std::string>(), "Set name of iChanneli uniform");
+		("iChanneli",          po::value<std::string>(), "Set name of iChanneli uniform")
+		("iSurfacePosition",   po::value<std::string>(), "Set name of iSurfacePosition varying");
 
 	po::options_description desc;
 	desc.add(gen).add(uni);
 
-	po::positional_options_description pos;
-	pos.add("file", 1);
-
 	po::variables_map vm;
-	auto parser = po::command_line_parser(argc, argv).options(desc).positional(pos);
 	try {
-		po::store(parser.run(), vm);
+		vm = parseArguments(argc, argv, desc);
 	}
 	catch(std::exception& e) {
-		std::cerr << e.what() << std::endl;
+		std::cerr << "Error: " << e.what() << std::endl;
 
 		return EXIT_FAILURE;
 	}
@@ -91,45 +127,9 @@ int main(int argc, char* argv[]) {
 		return EXIT_SUCCESS;
 	}
 	
-	if(vm.count("config")) {
-		std::ifstream iniFile {vm["config"].as<std::string>()};
-		
-		try {
-			po::store(po::parse_config_file(iniFile, desc, true), vm);  
-		}
-		catch(std::exception& e) {
-			std::cerr << e.what() << std::endl;
-	
-			return EXIT_FAILURE;
-		}
-	}
-	
-	if(vm.count("format")) {
-		auto arg = vm["format"].as<std::string>();
-		if(arg == "s") {
-			std::istringstream ss {shaderToy};
-			po::store(po::parse_config_file(ss, desc, true), vm);
-		}
-		else if(arg == "g") {
-			std::istringstream ss {glslSandbox};
-			po::store(po::parse_config_file(ss, desc, true), vm);
-		}
-		else {
-			std::cerr << "invalid argument of '--format'" << std::endl;
-
-			return EXIT_FAILURE;
-		}
-	}
-	else {
-		std::istringstream ss {shaderToy};
-		po::store(po::parse_config_file(ss, desc, true), vm);
-	}
-	
 	RunFragment::Configuration config;
 	
-	config.file = vm.count("file") 
-	            ? boost::optional<std::string> {vm["file"].as<std::string>()} 
-	            : boost::none;
+	config.file = vm["file"].as<std::string>();
 	config.time = vm["time"].as<float>();
 
 	config.iResolution = vm["iResolution"].as<std::string>();
@@ -142,23 +142,16 @@ int main(int argc, char* argv[]) {
 	config.iSampleRate = vm["iSampleRate"].as<std::string>();
 	config.iChannelResolution = vm["iChannelResolution"].as<std::string>();
 	config.iChanneli = vm["iChanneli"].as<std::string>();
+	config.iSurfacePosition = vm["iSurfacePosition"].as<std::string>();
 
-	return 0;
+	try {
+		RunFragment::Application application {config};
+		application.run();
+	}
+	catch(std::exception& e) {
+		std::cerr << e.what() << std::endl;
 
-	RunFragment::GlfwContext context;
-	RunFragment::GlfwWindow window {"Run fragment", 640, 480};
-
-	window.makeCurrent();
-
-	/* Loop until the user closes the window */
-	while(!window.isEnd()) {
-		/* Render here */
-
-		/* Swap front and back buffers */
-		window.swapBuffers();
-
-		/* Poll for and process events */
-		glfwPollEvents();
+		return EXIT_FAILURE;
 	}
 
 	return EXIT_SUCCESS;

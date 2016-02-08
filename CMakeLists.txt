@@ -10,7 +10,7 @@ include_directories(efsw/include)
 find_package(Boost REQUIRED COMPONENTS program_options)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS})
+include_directories(${Boost_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
 
 add_definitions(-std=c++11)
 
@@ -24,4 +24,6 @@ target_link_libraries(${PROJECT_NAME}
 	glfw ${GLFW_LIBRARIES}
 	efsw
 	${Boost_PROGRAM_OPTIONS_LIBRARY}
+	${OPENGL_LIBRARY}
+	${GLEW_LIBRARIES}
 )
