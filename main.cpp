@@ -94,10 +94,10 @@ int main(int argc, char* argv[]) {
 		("file",         po::value<std::string>(),                "Input file")
 		("config,c",     po::value<std::string>(),                "Config file")
 		("time,t",       po::value<float>(),                      "Set value that multiplies the time")
-		("main",         po::value<std::string>(),                "Set name of mainImage(out vec4 fragColor, in vec2 fragCoord) function; none if not used")
-		("add-uniforms", po::bool_switch()->default_value(false), "Add uniforms to begining of the file")
 		("help,h",                                                "Display help message")
-		("format,f",     po::value<std::string>(),                "Format of uniforms:\n    g : GLSLSandbox\n    s : ShaderToy (default)");
+		("format,f",     po::value<std::string>(),                "Format of file:\n    g : GLSLSandbox\n    s : ShaderToy (default)")
+		("main",         po::value<std::string>(),                "Set name of mainImage(out vec4, in vec2) function; none if not used")
+		("add-uniforms", po::bool_switch()->default_value(false), "Add uniforms to begining of the file");
 
 	po::options_description uni;
 	uni.add_options()
