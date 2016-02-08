@@ -145,7 +145,7 @@ void Application::render() {
 	reloadShader();
 	
 	GLfloat globalTime = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(std::chrono::high_resolution_clock::now() - startTime).count();
-	glUniform1f(iGlobalTime, globalTime);
+	glUniform1f(iGlobalTime, globalTime * config.time);
 	
 	int width;
 	int height;
