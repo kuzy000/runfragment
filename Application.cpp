@@ -194,6 +194,13 @@ void Application::reloadFile() {
 		std::stringstream ss;
 		ss << file.rdbuf();
 		
+		if(config.main != boost::none) {
+			ss << 
+				"void main() {\n"
+					+ *config.main + "(gl_FragColor, gl_FragCoord);\n"
+				"}\n";
+		}
+		
 		fragmentSource = ss.str();
 		changed = true;
 	}

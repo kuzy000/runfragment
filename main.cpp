@@ -12,6 +12,7 @@
 const std::string shaderToy = 
 R"raw(
 time = 1
+main = mainImage
 
 iResolution = iResolution
 iGlobalTime = iGlobalTime
@@ -28,6 +29,7 @@ iSurfacePosition = iSurfacePosition
 
 const std::string glslSandbox =  R"raw(
 time = 1
+main = none
 
 iResolution = resolution
 iGlobalTime = time
@@ -90,6 +92,7 @@ int main(int argc, char* argv[]) {
 		("file",     po::value<std::string>(), "Input file")
 		("config,c", po::value<std::string>(), "Config file")
 		("time,t",   po::value<float>(),       "Set value that multiplies the time")
+		("main",     po::value<std::string>(), "Set name of mainImage(out vec4 fragColor, in vec2 fragCoord) function; none if not used")
 		("help,h",                             "Display help message")
 		("format,f", po::value<std::string>(), "Format of uniforms:\n    g : GLSLSandbox\n    s : ShaderToy (default)");
 
@@ -131,6 +134,12 @@ int main(int argc, char* argv[]) {
 	
 	config.file = vm["file"].as<std::string>();
 	config.time = vm["time"].as<float>();
+	if(vm.count("main") && vm["main"].as<std::string>() != "none") {
+		config.main = vm["main"].as<std::string>();
+	}
+	else {
+		config.main = boost::none;
+	}
 
 	config.iResolution = vm["iResolution"].as<std::string>();
 	config.iGlobalTime = vm["iGlobalTime"].as<std::string>();

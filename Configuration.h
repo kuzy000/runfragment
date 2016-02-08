@@ -2,11 +2,14 @@
 
 #include <string>
 
+#include <boost/optional.hpp>
+
 namespace RunFragment {
 
 struct Configuration {
 	std::string file;
 	float time;
+	boost::optional<std::string> main;
 
 	std::string iResolution;
 	std::string iGlobalTime;
