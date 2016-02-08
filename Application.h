@@ -3,6 +3,7 @@
 #include "Configuration.h"
 
 #include <mutex>
+#include <chrono>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -38,14 +39,23 @@ private:
 	GLuint fragment = 0;
 	GLuint program = 0;
 	
-	GLint iGlobalTime = -1;
-	GLint iResolution = -1;
-	GLint iMouse = -1;
+	GLint iResolution = -1; // done
+	GLint iGlobalTime = -1; // done
+	GLint iGlobalDelta = -1;
+	GLint iGlobalFrame = -1;
+	GLint iChannelTime = -1;
+	GLint iMouse = -1; // done
+	GLint iDate = -1;
+	GLint iSampleRate = -1;
+	GLint iChannelResolution = -1;
+	GLint iChanneli = -1;
 	
 	std::mutex sourceChanging;
 	
 	std::string fragmentSource;
 	bool changed = false;
+	
+	std::chrono::high_resolution_clock::time_point startTime;
 };
 
 }

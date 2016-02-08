@@ -119,6 +119,8 @@ void Application::run() {
 	auto watchId = fileWatcher.addWatch(dir, &listener, false);
 	fileWatcher.watch();
 	
+	startTime = std::chrono::high_resolution_clock::now();
+	
 	while(!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		
@@ -140,6 +142,9 @@ void Application::onWindowResize(GLFWwindow*, int width, int height) {
 
 void Application::render() {
 	reloadShader();
+	
+	GLfloat time = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(std::chrono::high_resolution_clock::now() - startTime).count();
+	glUniform1f(iGlobalTime, time);
 	
 	int width;
 	int height;
@@ -198,9 +203,16 @@ void Application::reloadShader() {
 			glAttachShader(program, fragment);
 			glLinkProgram(program);
 
-			iGlobalTime = glGetUniformLocation(program, config.iGlobalTime.c_str());
 			iResolution = glGetUniformLocation(program, config.iResolution.c_str());
-			iMouse      = glGetUniformLocation(program, config.iMouse.c_str());
+			iGlobalTime = glGetUniformLocation(program, config.iGlobalTime.c_str());
+			iGlobalDelta = glGetUniformLocation(program, config.iGlobalDelta.c_str());
+			iGlobalFrame = glGetUniformLocation(program, config.iGlobalFrame.c_str());
+			iChannelTime = glGetUniformLocation(program, config.iChannelTime.c_str());
+			iMouse = glGetUniformLocation(program, config.iMouse.c_str());
+			iDate = glGetUniformLocation(program, config.iDate.c_str());
+			iSampleRate = glGetUniformLocation(program, config.iSampleRate.c_str());
+			iChannelResolution = glGetUniformLocation(program, config.iChannelResolution.c_str());
+			iChanneli = glGetUniformLocation(program, config.iChanneli.c_str());
 		}
 	}
 
