@@ -21,7 +21,7 @@ struct Configuration {
 	std::string iDate;
 	std::string iSampleRate;
 	std::string iChannelResolution;
-	std::string iChanneli;
+	std::string iChannel;
 	std::string iSurfacePosition;
 };
 

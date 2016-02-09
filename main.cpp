@@ -110,7 +110,7 @@ int main(int argc, char* argv[]) {
 		("iDate",              po::value<std::string>(), "Set name of iDate uniform")
 		("iSampleRate",        po::value<std::string>(), "Set name of iSampleRate uniform")
 		("iChannelResolution", po::value<std::string>(), "Set name of iChannelResolution uniform")
-		("iChanneli",          po::value<std::string>(), "Set name of iChanneli uniform")
+		("iChannel",          po::value<std::string>(),  "Set name of iChannelN uniform")
 		("iSurfacePosition",   po::value<std::string>(), "Set name of iSurfacePosition varying");
 
 	po::options_description desc;
@@ -155,7 +155,7 @@ int main(int argc, char* argv[]) {
 	config.iDate = vm["iDate"].as<std::string>();
 	config.iSampleRate = vm["iSampleRate"].as<std::string>();
 	config.iChannelResolution = vm["iChannelResolution"].as<std::string>();
-	config.iChanneli = vm["iChanneli"].as<std::string>();
+	config.iChannel = vm["iChannel"].as<std::string>();
 	config.iSurfacePosition = vm["iSurfacePosition"].as<std::string>();
 
 	try {

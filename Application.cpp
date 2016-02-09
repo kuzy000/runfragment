@@ -252,7 +252,7 @@ void Application::reloadShader() {
 			iDate = glGetUniformLocation(program, config.iDate.c_str());
 			iSampleRate = glGetUniformLocation(program, config.iSampleRate.c_str());
 			iChannelResolution = glGetUniformLocation(program, config.iChannelResolution.c_str());
-			iChanneli = glGetUniformLocation(program, config.iChanneli.c_str());
+//			iChannel = glGetUniformLocation(program, config.iChannel.c_str());
 		}
 	}
 
