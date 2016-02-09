@@ -23,6 +23,11 @@ struct Configuration {
 	std::string iChannelResolution;
 	std::string iChannel;
 	std::string iSurfacePosition;
+	
+	boost::optional<std::string> channel0;
+	boost::optional<std::string> channel1;
+	boost::optional<std::string> channel2;
+	boost::optional<std::string> channel3;
 };
 
 }

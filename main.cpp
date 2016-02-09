@@ -24,7 +24,7 @@ iMouse = iMouse
 iDate = iDate
 iSampleRate = iSampleRate
 iChannelResolution = iChannelResolution
-iChanneli = iChanneli
+iChannel = iChannel
 iSurfacePosition = iSurfacePosition
 )raw";
 
@@ -42,7 +42,7 @@ iMouse = mouse
 iDate = iDate
 iSampleRate = iSampleRate
 iChannelResolution = iChannelResolution
-iChanneli = iChanneli
+iChannel = iChannel
 iSurfacePosition = surfacePosition
 )raw";
 
@@ -97,7 +97,12 @@ int main(int argc, char* argv[]) {
 		("help,h",                                                "Display help message")
 		("format,f",     po::value<std::string>(),                "Format of file:\n    g : GLSLSandbox\n    s : ShaderToy (default)")
 		("main",         po::value<std::string>(),                "Set name of mainImage(out vec4, in vec2) function; none if not used")
-		("add-uniforms", po::bool_switch()->default_value(false), "Add uniforms to begining of the file");
+		("add-uniforms", po::bool_switch()->default_value(false), "Add uniforms to begining of the file")
+//		("channels",     , "Set list of channels data");
+		("channel0",     po::value<std::string>(),                "Set channel0 data (shader or png); none if not used")
+		("channel1",     po::value<std::string>(),                "Set channel1 data (shader or png); none if not used")
+		("channel2",     po::value<std::string>(),                "Set channel2 data (shader or png); none if not used")
+		("channel3",     po::value<std::string>(),                "Set channel3 data (shader or png); none if not used");
 
 	po::options_description uni;
 	uni.add_options()
@@ -110,7 +115,7 @@ int main(int argc, char* argv[]) {
 		("iDate",              po::value<std::string>(), "Set name of iDate uniform")
 		("iSampleRate",        po::value<std::string>(), "Set name of iSampleRate uniform")
 		("iChannelResolution", po::value<std::string>(), "Set name of iChannelResolution uniform")
-		("iChannel",          po::value<std::string>(),  "Set name of iChannelN uniform")
+		("iChannel",           po::value<std::string>(), "Set name of iChannelN uniform")
 		("iSurfacePosition",   po::value<std::string>(), "Set name of iSurfacePosition varying");
 
 	po::options_description desc;
@@ -133,18 +138,25 @@ int main(int argc, char* argv[]) {
 		return EXIT_SUCCESS;
 	}
 	
+	auto lookupOptional = [&vm] (std::string name) -> boost::optional<std::string> {
+		if(vm.count(name) && vm[name].as<std::string>() != "none") {
+			return vm[name].as<std::string>();
+		}
+		else {
+			return boost::none;
+		}
+	};
 	
 	RunFragment::Configuration config;
 	
 	config.file = vm["file"].as<std::string>();
 	config.time = vm["time"].as<float>();
-	if(vm.count("main") && vm["main"].as<std::string>() != "none") {
-		config.main = vm["main"].as<std::string>();
-	}
-	else {
-		config.main = boost::none;
-	}
+	config.main = lookupOptional("main");
 	config.addUniforms = vm["add-uniforms"].as<bool>();
+	config.channel0 = lookupOptional("channel0");
+	config.channel1 = lookupOptional("channel1");
+	config.channel2 = lookupOptional("channel2");
+	config.channel3 = lookupOptional("channel3");
 
 	config.iResolution = vm["iResolution"].as<std::string>();
 	config.iGlobalTime = vm["iGlobalTime"].as<std::string>();
