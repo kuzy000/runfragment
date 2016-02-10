@@ -48,7 +48,10 @@ private:
 	GLint iDate = -1; // done
 	GLint iSampleRate = -1;
 	GLint iChannelResolution = -1;
-	GLint iChannel = -1;
+	GLint iChannel0 = -1;
+	GLint iChannel1 = -1;
+	GLint iChannel2 = -1;
+	GLint iChannel3 = -1;
 	
 	std::mutex sourceChanging;
 	

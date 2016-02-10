@@ -202,8 +202,11 @@ void Application::reloadFile() {
 			   << "uniform vec4      " + config.iMouse + ";" << std::endl
 			   << "uniform vec4      " + config.iDate + ";" << std::endl
 			   << "uniform float     " + config.iSampleRate + ";" << std::endl
-			   << "uniform vec3      " + config.iChannelResolution + "[4];" << std::endl;
-//			   << "uniform samplerXX " + config.iChanneli + ";" << std::endl;
+			   << "uniform vec3      " + config.iChannelResolution + "[4];" << std::endl
+			   << "uniform sampler2D " + config.iChannel + "0;" << std::endl
+			   << "uniform sampler2D " + config.iChannel + "1;" << std::endl
+			   << "uniform sampler2D " + config.iChannel + "2;" << std::endl
+			   << "uniform sampler2D " + config.iChannel + "3;" << std::endl;
 		}
 		
 		ss << file.rdbuf();
@@ -229,7 +232,7 @@ void Application::reloadShader() {
 	if(changed) {
 		GLuint newFragment = compileShader(GL_FRAGMENT_SHADER, fragmentSource);
 		if(newFragment != 0) {
-			std::cout << "OK" << std::endl;
+			std::cout << config.file << ": OK" << std::endl;
 			if(fragment != 0) {
 				glDeleteShader(fragment);
 			}
@@ -252,7 +255,10 @@ void Application::reloadShader() {
 			iDate = glGetUniformLocation(program, config.iDate.c_str());
 			iSampleRate = glGetUniformLocation(program, config.iSampleRate.c_str());
 			iChannelResolution = glGetUniformLocation(program, config.iChannelResolution.c_str());
-//			iChannel = glGetUniformLocation(program, config.iChannel.c_str());
+			iChannel0 = glGetUniformLocation(program, (config.iChannel + "0").c_str());
+			iChannel1 = glGetUniformLocation(program, (config.iChannel + "1").c_str());
+			iChannel2 = glGetUniformLocation(program, (config.iChannel + "2").c_str());
+			iChannel3 = glGetUniformLocation(program, (config.iChannel + "3").c_str());
 		}
 	}
 
@@ -279,7 +285,8 @@ GLuint Application::compileShader(GLenum type, const std::string& source) {
 		std::unique_ptr<GLchar[]> errorLog = std::unique_ptr<GLchar[]>(new GLchar[length]);
 		glGetShaderInfoLog(id, sizeof(GLchar) * length, nullptr, errorLog.get());
 
-		std::cerr << "Shader compilation failed:\n" << errorLog.get() << std::endl;
+		std::cerr << config.file << ":" << std::endl;
+		std::cerr << errorLog.get() << std::endl;
 
 		id = 0;
 	}
