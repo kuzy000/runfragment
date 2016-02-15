@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <fstream>
+#include <iostream>
 
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/parsers.hpp>

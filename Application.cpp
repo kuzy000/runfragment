@@ -1,7 +1,5 @@
 #include "Application.h"
 
-#include "FileWatchListenerLambda.h"
-
 #include <sstream>
 #include <stdexcept>
 #include <fstream>
@@ -9,8 +7,6 @@
 #include <memory>
 #include <regex>
 #include <ctime>
-
-#include <efsw/efsw.hpp>
 
 namespace RunFragment {
 
@@ -48,6 +44,9 @@ Application::Application(const Configuration& config)
 	glfwSwapInterval(1);
 	
 	glfwSetWindowSizeCallback(window, &Application::onWindowResize);
+	
+	
+	main = std::unique_ptr<Renderer> {new Renderer {config, Renderer::Target::Main, window}};
 }
 
 Application::~Application() {
@@ -60,33 +59,15 @@ Application::~Application() {
 }
 
 void Application::run() {
-	std::string dir = std::regex_replace(config.file, std::regex {"/[^/]*$"}, "");
-	std::string file = std::regex_replace(config.file, std::regex {"^.*/"}, "");
-	
-	efsw::FileWatcher fileWatcher;
-	FileWatchListenerLambda listener {
-		[this, &file] (efsw::WatchID watchid, const std::string& dir, const std::string& filename, efsw::Action action, std::string oldFilename) {
-			if(filename == file && action == efsw::Actions::Add) {
-				this->reloadFile();
-				return;
-			}
-		}
-	};
-	
-	auto watchId = fileWatcher.addWatch(dir, &listener, false);
-	fileWatcher.watch();
-	
-	startTime = std::chrono::high_resolution_clock::now();
+	main->run();
 	
 	while(!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		
-		render();
+		main->render();
 		
 		glfwSwapBuffers(window);
 	}
-	
-	fileWatcher.removeWatch(watchId);
 }
 
 void Application::onGlfwError(int error, const char* description) {

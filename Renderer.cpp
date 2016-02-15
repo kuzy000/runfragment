@@ -1,9 +1,24 @@
 #include "Renderer.h"
 
+#include "FileWatchListenerLambda.h"
+
+#include <stdexcept>
+#include <regex>
+#include <fstream>
+#include <iostream>
+
 namespace RunFragment {
 
-Renderer::Renderer(const Configuration& config)
-	: config {config}, target {target} {
+Renderer::Renderer(const Configuration& config, Target target, GLFWwindow* window)
+	: config {config}
+    , target {target}
+    , window {window}
+    , path {target == Target::Main ? config.file 
+	      : target == Target::Channel0 ? *config.channel0
+	      : target == Target::Channel1 ? *config.channel1
+	      : target == Target::Channel2 ? *config.channel2
+	      : target == Target::Channel3 ? *config.channel3
+	      : throw std::runtime_error {"undefined render target"}} {
 	const GLfloat vertices[] = {
 		 1.0f,  1.0f,
 		 1.0f, -1.0f,
@@ -47,6 +62,26 @@ Renderer::Renderer(const Configuration& config)
 	vertex = compileShader(GL_VERTEX_SHADER, vertexSource);
 	
 	reloadFile();
+}
+
+void Renderer::run() {
+	std::string dir  = std::regex_replace(path, std::regex {"/[^/]*$"}, "");
+	std::string file = std::regex_replace(path, std::regex {"^.*/"}, "");
+	
+	efsw::FileWatcher fileWatcher;
+	FileWatchListenerLambda listener {
+		[this, &file] (efsw::WatchID watchid, const std::string& dir, const std::string& filename, efsw::Action action, std::string oldFilename) {
+			if(filename == file && action == efsw::Actions::Add) {
+				this->reloadFile();
+				return;
+			}
+		}
+	};
+	
+	watchId = fileWatcher.addWatch(dir, &listener, false);
+	fileWatcher.watch();
+	
+	startTime = std::chrono::high_resolution_clock::now();
 }
 
 void Renderer::render() {
@@ -96,7 +131,7 @@ void Renderer::render() {
 void Renderer::reloadFile() {
 	std::lock_guard<std::mutex> guard {sourceChanging};
 	
-	std::ifstream file {config.file};
+	std::ifstream file {path};
 	
 	if(file.is_open()) {
 		std::stringstream ss;

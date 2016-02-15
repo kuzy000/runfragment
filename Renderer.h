@@ -5,6 +5,8 @@
 #include <mutex>
 #include <chrono>
 
+#include <efsw/efsw.hpp>
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -14,10 +16,11 @@ class Renderer {
 public:
 	enum class Target { Main, Channel0, Channel1, Channel2, Channel3 };
 	
-	Renderer(const Configuration& config, Target target);
+	Renderer(const Configuration& config, Target target, GLFWwindow* window);
 	
-private:
+	void run();
 	void render();
+private:
 	void reloadFile();
 	void reloadShader();
 	
@@ -25,6 +28,11 @@ private:
 	
 	const Configuration& config;
 	const Target target;
+	const std::string path;
+	
+	GLFWwindow* window;
+	
+	efsw::WatchID watchId;
 	
 	GLuint vao = 0;
 	GLuint vbo = 0;
