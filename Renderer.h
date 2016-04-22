@@ -1,11 +1,10 @@
 #pragma once
 
 #include "Configuration.h"
+#include "OnScopeEnd.h"
 
 #include <mutex>
 #include <chrono>
-
-#include <efsw/efsw.hpp>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -20,8 +19,8 @@ public:
 	
 	void run();
 	void render();
-private:
 	void reloadFile();
+private:
 	void reloadShader();
 	
 	GLuint compileShader(GLenum type, const std::string& source);
@@ -31,8 +30,6 @@ private:
 	const std::string path;
 	
 	GLFWwindow* window;
-	
-	efsw::WatchID watchId;
 	
 	GLuint vao = 0;
 	GLuint vbo = 0;

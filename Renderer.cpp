@@ -1,6 +1,6 @@
 #include "Renderer.h"
 
-#include "FileWatchListenerLambda.h"
+#include "OnScopeEnd.h"
 
 #include <stdexcept>
 #include <regex>
@@ -65,22 +65,6 @@ Renderer::Renderer(const Configuration& config, Target target, GLFWwindow* windo
 }
 
 void Renderer::run() {
-	std::string dir  = std::regex_replace(path, std::regex {"/[^/]*$"}, "");
-	std::string file = std::regex_replace(path, std::regex {"^.*/"}, "");
-	
-	efsw::FileWatcher fileWatcher;
-	FileWatchListenerLambda listener {
-		[this, &file] (efsw::WatchID watchid, const std::string& dir, const std::string& filename, efsw::Action action, std::string oldFilename) {
-			if(filename == file && action == efsw::Actions::Add) {
-				this->reloadFile();
-				return;
-			}
-		}
-	};
-	
-	watchId = fileWatcher.addWatch(dir, &listener, false);
-	fileWatcher.watch();
-	
 	startTime = std::chrono::high_resolution_clock::now();
 }
 

@@ -1,5 +1,7 @@
 #include "Application.h"
 
+#include "FileWatcher.h"
+
 #include <sstream>
 #include <stdexcept>
 #include <fstream>
@@ -7,6 +9,9 @@
 #include <memory>
 #include <regex>
 #include <ctime>
+#include <thread>
+
+#include <boost/optional.hpp>
 
 namespace RunFragment {
 
@@ -15,26 +20,26 @@ Application::Application(const Configuration& config)
 	
 	glfwSetErrorCallback(&Application::onGlfwError);
 	
-	glfwInit();
 	if(!glfwInit()) {
 		throw std::runtime_error {"Failed to initialize GLFW"};
 	}
-	glfwInitalized = true;
+	onDestruction.push([this] {
+		glfwTerminate();
+	});
 	
 	window = glfwCreateWindow(640, 480, "Run fragment", nullptr, nullptr);
 	if(!window) {
-		glfwTerminate();
 		throw std::runtime_error {"Failed to create GLFWwindow"};
 	}
+	onDestruction.push([this] {
+		glfwDestroyWindow(window);
+	});
 	
 	glfwMakeContextCurrent(window);
 	
 	glewExperimental = true;
 	GLenum status = glewInit();
 	if(status != GLEW_OK) {
-		glfwDestroyWindow(window);
-		glfwTerminate();
-		
 		std::stringstream ss;
 		ss << "Failed to initialize GLEW" << std::endl;
 		ss << "GLEW error: " << glewGetErrorString(status) << std::endl;
@@ -45,20 +50,28 @@ Application::Application(const Configuration& config)
 	
 	glfwSetWindowSizeCallback(window, &Application::onWindowResize);
 	
-	
 	main = std::unique_ptr<Renderer> {new Renderer {config, Renderer::Target::Main, window}};
 }
 
-Application::~Application() {
-	if(window) {
-		glfwDestroyWindow(window);
-	}
-	if(glfwInitalized) {
-		glfwTerminate();
-	}
-}
-
 void Application::run() {
+	FileWatcher fileWatcher;
+	
+	auto addIfDefined = [&fileWatcher] (const boost::optional<std::string>& channel, Renderer* renderer) {
+		if(channel) {
+			fileWatcher.add(*channel, [renderer] {
+				renderer->reloadFile();
+			});
+		}
+	};
+	addIfDefined(config.file, main.get());
+	addIfDefined(config.channel0, channel0.get());
+	addIfDefined(config.channel1, channel1.get());
+	addIfDefined(config.channel2, channel2.get());
+	addIfDefined(config.channel3, channel3.get());
+	
+	auto fileWatcherThread = fileWatcher.spawn();
+	fileWatcherThread.detach();
+	
 	main->run();
 	
 	while(!glfwWindowShouldClose(window)) {
@@ -68,6 +81,7 @@ void Application::run() {
 		
 		glfwSwapBuffers(window);
 	}
+	
 }
 
 void Application::onGlfwError(int error, const char* description) {

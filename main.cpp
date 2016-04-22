@@ -29,7 +29,8 @@ iChannel = iChannel
 iSurfacePosition = iSurfacePosition
 )raw";
 
-const std::string glslSandbox =  R"raw(
+const std::string glslSandbox = 
+R"raw(
 time = 1
 main = none
 add-uniforms = false
@@ -97,13 +98,13 @@ int main(int argc, char* argv[]) {
 		("time,t",       po::value<float>(),                      "Set value that multiplies the time")
 		("help,h",                                                "Display help message")
 		("format,f",     po::value<std::string>(),                "Format of file:\n    g : GLSLSandbox\n    s : ShaderToy (default)")
-		("main",         po::value<std::string>(),                "Set name of mainImage(out vec4, in vec2) function; none if not used")
+		("main",         po::value<std::string>(),                "Set name of mainImage(out vec4, in vec2) function; 'none' if not used")
 		("add-uniforms", po::bool_switch()->default_value(false), "Add uniforms to begining of the file");
 //		("channels",     , "Set list of channels data");
-//		("channel0",     po::value<std::string>(),                "Set channel0 data (shader or png); none if not used")
-//		("channel1",     po::value<std::string>(),                "Set channel1 data (shader or png); none if not used")
-//		("channel2",     po::value<std::string>(),                "Set channel2 data (shader or png); none if not used")
-//		("channel3",     po::value<std::string>(),                "Set channel3 data (shader or png); none if not used");
+//		("channel0",     po::value<std::string>(),                "Set channel0 data (shader or png); 'none' if not used")
+//		("channel1",     po::value<std::string>(),                "Set channel1 data (shader or png); 'none' if not used")
+//		("channel2",     po::value<std::string>(),                "Set channel2 data (shader or png); 'none' if not used")
+//		("channel3",     po::value<std::string>(),                "Set channel3 data (shader or png); 'none' if not used");
 
 	po::options_description uni;
 	uni.add_options()
@@ -121,10 +122,10 @@ int main(int argc, char* argv[]) {
 	
 	po::options_description unimpl;
 	unimpl.add_options()
-		("channel0",     po::value<std::string>(),                "Set channel0 data (shader or png); none if not used")
-		("channel1",     po::value<std::string>(),                "Set channel1 data (shader or png); none if not used")
-		("channel2",     po::value<std::string>(),                "Set channel2 data (shader or png); none if not used")
-		("channel3",     po::value<std::string>(),                "Set channel3 data (shader or png); none if not used")
+		("channel0",     po::value<std::string>(),                "Set channel0 data (shader or png); 'none' if not used")
+		("channel1",     po::value<std::string>(),                "Set channel1 data (shader or png); 'none' if not used")
+		("channel2",     po::value<std::string>(),                "Set channel2 data (shader or png); 'none' if not used")
+		("channel3",     po::value<std::string>(),                "Set channel3 data (shader or png); 'none' if not used")
 		("iGlobalDelta",       po::value<std::string>(), "Set name of iGlobalDelta uniform")
 		("iGlobalFrame",       po::value<std::string>(), "Set name of iGlobalFrame uniform")
 		("iChannelTime",       po::value<std::string>(), "Set name of iChannelTime uniform")

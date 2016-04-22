@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Configuration.h"
+#include "OnScopeEnd.h"
 #include "Renderer.h"
 
 #include <mutex>
@@ -15,7 +16,6 @@ namespace RunFragment {
 class Application {
 public:
 	Application(const Configuration& config);
-	~Application();
 	
 	void run();
 private:
@@ -31,7 +31,8 @@ private:
 	std::unique_ptr<Renderer> channel3;
 	
 	GLFWwindow* window = nullptr;
-	bool glfwInitalized = false;
+	
+	OnScopeEnd onDestruction;
 };
 
 }
