@@ -30,7 +30,11 @@ void FileWatcher::run() {
 		
 		auto wd = inotify_add_watch(fd, path.c_str(), IN_CLOSE_WRITE);
 		if(wd == -1) {
-			// TODO: Add checking that file exist
+			bool tryAccess = (access(path.c_str(), F_OK) != -1);
+			if(!tryAccess) {
+				std::cerr << "Error: can't monitor file '" << path << "'" << std::endl;
+				continue;
+			}
 			throw std::runtime_error {"inotify_add_watch returned -1"};
 		}
 		else {
@@ -58,7 +62,6 @@ void FileWatcher::run() {
 			const std::string& path = it->first;
 			
 			if(event->mask & IN_IGNORED) {
-				std::cout << "hello";
 				inotify_rm_watch(fd, wd);
 				auto newWd = inotify_add_watch(fd, path.c_str(), IN_MODIFY);
 				if(wd == -1) {

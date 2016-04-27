@@ -56,28 +56,47 @@ Application::Application(const Configuration& config)
 void Application::run() {
 	FileWatcher fileWatcher;
 	
-	auto addIfDefined = [&fileWatcher] (const boost::optional<std::string>& channel, Renderer* renderer) {
+	auto watchIfDefined = [&fileWatcher] (const boost::optional<std::string>& channel, Renderer* renderer) {
 		if(channel) {
 			fileWatcher.add(*channel, [renderer] {
 				renderer->reloadFile();
 			});
 		}
 	};
-	addIfDefined(config.file, main.get());
-	addIfDefined(config.channel0, channel0.get());
-	addIfDefined(config.channel1, channel1.get());
-	addIfDefined(config.channel2, channel2.get());
-	addIfDefined(config.channel3, channel3.get());
+	watchIfDefined(config.file, main.get());
+	watchIfDefined(config.channel0, channel0.get());
+	watchIfDefined(config.channel1, channel1.get());
+	watchIfDefined(config.channel2, channel2.get());
+	watchIfDefined(config.channel3, channel3.get());
 	
 	auto fileWatcherThread = fileWatcher.spawn();
 	fileWatcherThread.detach();
 	
-	main->run();
+	auto runIfDefined = [] (Renderer* renderer) {
+		if(renderer) {
+			renderer->run();
+		}
+	};
+	runIfDefined(main.get());
+	runIfDefined(channel0.get());
+	runIfDefined(channel1.get());
+	runIfDefined(channel2.get());
+	runIfDefined(channel3.get());
+	
+	auto renderIfDefined = [] (Renderer* renderer) {
+		if(renderer) {
+			renderer->render();
+		}
+	};
 	
 	while(!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		
-		main->render();
+		renderIfDefined(main.get());
+		renderIfDefined(channel0.get());
+		renderIfDefined(channel1.get());
+		renderIfDefined(channel2.get());
+		renderIfDefined(channel3.get());
 		
 		glfwSwapBuffers(window);
 	}
