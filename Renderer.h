@@ -59,6 +59,8 @@ private:
 	bool changed = false;
 	
 	std::chrono::high_resolution_clock::time_point startTime;
+	
+	OnScopeEnd onDestruction;
 };
 
 }

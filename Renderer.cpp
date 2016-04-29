@@ -11,9 +11,9 @@ namespace RunFragment {
 
 Renderer::Renderer(const Configuration& config, Target target, GLFWwindow* window)
 	: config {config}
-    , target {target}
-    , window {window}
-    , path {target == Target::Main ? config.file 
+	, target {target}
+	, window {window}
+	, path {target == Target::Main ? config.file 
 	      : target == Target::Channel0 ? *config.channel0
 	      : target == Target::Channel1 ? *config.channel1
 	      : target == Target::Channel2 ? *config.channel2
@@ -31,8 +31,19 @@ Renderer::Renderer(const Configuration& config, Target target, GLFWwindow* windo
 	};
 	
 	glGenVertexArrays(1, &vao);
+	onDestruction.push([this] {
+		glDeleteVertexArrays(1, &vao);
+	});
+	
 	glGenBuffers(1, &vbo);
+	onDestruction.push([this] {
+		glDeleteBuffers(1, &vao);
+	});
+
 	glGenBuffers(1, &ebo);
+	onDestruction.push([this] {
+		glDeleteBuffers(1, &ebo);
+	});
 	
 	glBindVertexArray(vao);
 	
@@ -60,8 +71,16 @@ Renderer::Renderer(const Configuration& config, Target target, GLFWwindow* windo
 	)glsl";
 	
 	vertex = compileShader(GL_VERTEX_SHADER, vertexSource);
+	onDestruction.push([this] {
+		glDeleteShader(vertex);
+	});
 	
 	reloadFile();
+	
+	onDestruction.push([this] {
+		glDeleteShader(fragment);
+		glDeleteProgram(program);
+	});
 }
 
 void Renderer::run() {

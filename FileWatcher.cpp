@@ -3,8 +3,6 @@
 #include <sys/inotify.h>
 #include <climits>
 #include <unistd.h>
-#include <vector>
-#include <algorithm>
 #include <iostream>
 
 namespace RunFragment {
