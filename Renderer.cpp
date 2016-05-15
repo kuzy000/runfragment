@@ -9,16 +9,14 @@
 
 namespace RunFragment {
 
+Renderer::SharedData Renderer::sharedData;
+
 Renderer::Renderer(const Configuration& config, Target target, GLFWwindow* window)
 	: config {config}
 	, target {target}
 	, window {window}
-	, path {target == Target::Main ? config.file 
-	      : target == Target::Channel0 ? *config.channel0
-	      : target == Target::Channel1 ? *config.channel1
-	      : target == Target::Channel2 ? *config.channel2
-	      : target == Target::Channel3 ? *config.channel3
-	      : throw std::runtime_error {"undefined render target"}} {
+	, path {target == Target::Image ? config.file 
+	      : *config.channels[static_cast<std::size_t>(target)]} {
 	const GLfloat vertices[] = {
 		 1.0f,  1.0f,
 		 1.0f, -1.0f,
@@ -81,14 +79,61 @@ Renderer::Renderer(const Configuration& config, Target target, GLFWwindow* windo
 		glDeleteShader(fragment);
 		glDeleteProgram(program);
 	});
+	
+	glGenFramebuffers(1, &fbo);
+	onDestruction.push([this] {
+		glDeleteFramebuffers(1, &fbo);
+	});
+	
+	glGenTextures(1, &tex);
+	onDestruction.push([this] {
+		glDeleteTextures(1, &tex);
+	});
+
+	glBindTexture(GL_TEXTURE_2D, tex);
+	
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
 }
 
-void Renderer::run() {
+void Renderer::start() {
 	startTime = std::chrono::high_resolution_clock::now();
 }
 
 void Renderer::render() {
 	reloadShader();
+	
+	if(target != Target::Image) {
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	}
+	else {
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+	
+	glClearColor(0.f, 0.f, 0.f, 1.f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	
+	glUseProgram(program);
+	glBindVertexArray(vao);
+	
+	auto uniformSamplerIfDefined = [this] (int num) {
+		if(sharedData.texs[num] != 0) {
+			glActiveTexture(GL_TEXTURE0 + num);
+			glBindTexture(GL_TEXTURE_2D, sharedData.texs[num]);
+
+			glUniform1i(iChannels[num], num);
+		}
+	};
+	
+	uniformSamplerIfDefined(0);
+	uniformSamplerIfDefined(1);
+	uniformSamplerIfDefined(2);
+	uniformSamplerIfDefined(3);
 	
 	GLfloat globalTime = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(std::chrono::high_resolution_clock::now() - startTime).count();
 	glUniform1f(iGlobalTime, globalTime * config.time);
@@ -120,12 +165,6 @@ void Renderer::render() {
 		return t1 - t2;
 	} ();
 	glUniform4f(iDate, year, month, day, sec);
-	
-	glClearColor(0.f, 0.f, 0.f, 1.f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	
-	glUseProgram(program);
-	glBindVertexArray(vao);
 	
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
@@ -160,7 +199,7 @@ void Renderer::reloadFile() {
 		if(config.main != boost::none) {
 			ss << 
 				"void main() {\n"
-					+ *config.main + "(gl_FragColor, gl_FragCoord);\n"
+					<< *config.main + "(gl_FragColor, gl_FragCoord);\n"
 				"}\n";
 		}
 		
@@ -178,7 +217,7 @@ void Renderer::reloadShader() {
 	if(changed) {
 		GLuint newFragment = compileShader(GL_FRAGMENT_SHADER, fragmentSource);
 		if(newFragment != 0) {
-			std::cout << config.file << ": OK" << std::endl;
+			std::cout << path << ": OK" << std::endl;
 			if(fragment != 0) {
 				glDeleteShader(fragment);
 			}
@@ -201,14 +240,20 @@ void Renderer::reloadShader() {
 			iDate = glGetUniformLocation(program, config.iDate.c_str());
 			iSampleRate = glGetUniformLocation(program, config.iSampleRate.c_str());
 			iChannelResolution = glGetUniformLocation(program, config.iChannelResolution.c_str());
-			iChannel0 = glGetUniformLocation(program, (config.iChannel + "0").c_str());
-			iChannel1 = glGetUniformLocation(program, (config.iChannel + "1").c_str());
-			iChannel2 = glGetUniformLocation(program, (config.iChannel + "2").c_str());
-			iChannel3 = glGetUniformLocation(program, (config.iChannel + "3").c_str());
+			iChannels[0] = glGetUniformLocation(program, (config.iChannel + "0").c_str());
+			iChannels[1] = glGetUniformLocation(program, (config.iChannel + "1").c_str());
+			iChannels[2] = glGetUniformLocation(program, (config.iChannel + "2").c_str());
+			iChannels[3] = glGetUniformLocation(program, (config.iChannel + "3").c_str());
 		}
 	}
 
 	changed = false;
+}
+
+void Renderer::onWindowResize(int width, int height) {
+	for(GLuint& tex : sharedData.texs) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+	}
 }
 
 GLuint Renderer::compileShader(GLenum type, const std::string& source) {
@@ -239,6 +284,5 @@ GLuint Renderer::compileShader(GLenum type, const std::string& source) {
 
 	return id;
 }
-
 
 }

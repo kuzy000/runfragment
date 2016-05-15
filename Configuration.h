@@ -3,6 +3,7 @@
 #include <string>
 
 #include <boost/optional.hpp>
+#include <array>
 
 namespace RunFragment {
 
@@ -24,10 +25,7 @@ struct Configuration {
 	std::string iChannel;
 	std::string iSurfacePosition;
 	
-	boost::optional<std::string> channel0;
-	boost::optional<std::string> channel1;
-	boost::optional<std::string> channel2;
-	boost::optional<std::string> channel3;
+	std::array<boost::optional<std::string>, 4> channels {};
 };
 
 }

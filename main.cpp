@@ -99,12 +99,11 @@ int main(int argc, char* argv[]) {
 		("help,h",                                                "Display help message")
 		("format,f",     po::value<std::string>(),                "Format of file:\n    g : GLSLSandbox\n    s : ShaderToy (default)")
 		("main",         po::value<std::string>(),                "Set name of mainImage(out vec4, in vec2) function; 'none' if not used")
-		("add-uniforms", po::bool_switch()->default_value(false), "Add uniforms to begining of the file");
-//		("channels",     , "Set list of channels data");
-//		("channel0",     po::value<std::string>(),                "Set channel0 data (shader or png); 'none' if not used")
-//		("channel1",     po::value<std::string>(),                "Set channel1 data (shader or png); 'none' if not used")
-//		("channel2",     po::value<std::string>(),                "Set channel2 data (shader or png); 'none' if not used")
-//		("channel3",     po::value<std::string>(),                "Set channel3 data (shader or png); 'none' if not used");
+		("add-uniforms", po::bool_switch()->default_value(false), "Add uniforms to begining of the file")
+		("channel0",     po::value<std::string>(),                "Set channel0 data (shader); 'none' if not used")
+		("channel1",     po::value<std::string>(),                "Set channel1 data (shader); 'none' if not used")
+		("channel2",     po::value<std::string>(),                "Set channel2 data (shader); 'none' if not used")
+		("channel3",     po::value<std::string>(),                "Set channel3 data (shader); 'none' if not used");
 
 	po::options_description uni;
 	uni.add_options()
@@ -117,21 +116,16 @@ int main(int argc, char* argv[]) {
 		("iDate",              po::value<std::string>(), "Set name of iDate uniform")
 //		("iSampleRate",        po::value<std::string>(), "Set name of iSampleRate uniform")
 //		("iChannelResolution", po::value<std::string>(), "Set name of iChannelResolution uniform")
-//		("iChannel",           po::value<std::string>(), "Set name of iChannelN uniform")
+		("iChannel",           po::value<std::string>(), "Set name of iChannelN uniform")
 		("iSurfacePosition",   po::value<std::string>(), "Set name of iSurfacePosition varying");
 	
 	po::options_description unimpl;
 	unimpl.add_options()
-		("channel0",     po::value<std::string>(),                "Set channel0 data (shader or png); 'none' if not used")
-		("channel1",     po::value<std::string>(),                "Set channel1 data (shader or png); 'none' if not used")
-		("channel2",     po::value<std::string>(),                "Set channel2 data (shader or png); 'none' if not used")
-		("channel3",     po::value<std::string>(),                "Set channel3 data (shader or png); 'none' if not used")
 		("iGlobalDelta",       po::value<std::string>(), "Set name of iGlobalDelta uniform")
 		("iGlobalFrame",       po::value<std::string>(), "Set name of iGlobalFrame uniform")
 		("iChannelTime",       po::value<std::string>(), "Set name of iChannelTime uniform")
 		("iSampleRate",        po::value<std::string>(), "Set name of iSampleRate uniform")
-		("iChannelResolution", po::value<std::string>(), "Set name of iChannelResolution uniform")
-		("iChannel",           po::value<std::string>(), "Set name of iChannelN uniform");
+		("iChannelResolution", po::value<std::string>(), "Set name of iChannelResolution uniform");
 
 	po::options_description desc;
 	desc.add(gen).add(uni).add(unimpl);
@@ -170,10 +164,10 @@ int main(int argc, char* argv[]) {
 	config.time = vm["time"].as<float>();
 	config.main = lookupOptional("main");
 	config.addUniforms = vm["add-uniforms"].as<bool>();
-	config.channel0 = lookupOptional("channel0");
-	config.channel1 = lookupOptional("channel1");
-	config.channel2 = lookupOptional("channel2");
-	config.channel3 = lookupOptional("channel3");
+	config.channels[0] = lookupOptional("channel0");
+	config.channels[1] = lookupOptional("channel1");
+	config.channels[2] = lookupOptional("channel2");
+	config.channels[3] = lookupOptional("channel3");
 
 	config.iResolution = vm["iResolution"].as<std::string>();
 	config.iGlobalTime = vm["iGlobalTime"].as<std::string>();

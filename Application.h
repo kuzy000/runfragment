@@ -24,11 +24,8 @@ private:
 	
 	const Configuration config;
 	
-	std::unique_ptr<Renderer> main;
-	std::unique_ptr<Renderer> channel0;
-	std::unique_ptr<Renderer> channel1;
-	std::unique_ptr<Renderer> channel2;
-	std::unique_ptr<Renderer> channel3;
+	std::unique_ptr<Renderer> image;
+	std::array<std::unique_ptr<Renderer>, 4> bufs {};
 	
 	GLFWwindow* window = nullptr;
 	

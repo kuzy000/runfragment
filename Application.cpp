@@ -50,53 +50,60 @@ Application::Application(const Configuration& config)
 	
 	glfwSetWindowSizeCallback(window, &Application::onWindowResize);
 	
-	main = std::unique_ptr<Renderer> {new Renderer {config, Renderer::Target::Main, window}};
+	image = std::unique_ptr<Renderer> {new Renderer {config, Renderer::Target::Image, window}};
+	for(std::size_t i = 0; i < bufs.size(); i++) {
+		auto& buf = bufs[i];
+		if(config.channels[i]) {
+			buf = std::unique_ptr<Renderer> {new Renderer {config, static_cast<Renderer::Target>(i), window}};
+		}
+	}
 }
 
 void Application::run() {
 	FileWatcher fileWatcher;
 	
 	auto watchIfDefined = [&fileWatcher] (const boost::optional<std::string>& channel, Renderer* renderer) {
-		if(channel) {
+		if(renderer) {
 			fileWatcher.add(*channel, [renderer] {
 				renderer->reloadFile();
 			});
 		}
 	};
-	watchIfDefined(config.file, main.get());
-	watchIfDefined(config.channel0, channel0.get());
-	watchIfDefined(config.channel1, channel1.get());
-	watchIfDefined(config.channel2, channel2.get());
-	watchIfDefined(config.channel3, channel3.get());
+	
+	fileWatcher.add(config.file, [this] {
+		image->reloadFile();
+	});
+	for(std::size_t i = 0; i < bufs.size(); i++) {
+		auto& buf = bufs[i];
+		const auto& file = config.channels[i];
+		
+		if(buf) {
+			assert(file);
+			fileWatcher.add(*file, [&buf] {
+				buf->reloadFile();
+			});
+		}
+	}
 	
 	auto fileWatcherThread = fileWatcher.spawn();
 	fileWatcherThread.detach();
 	
-	auto runIfDefined = [] (Renderer* renderer) {
-		if(renderer) {
-			renderer->run();
+	image->start();
+	for(auto& buf : bufs) {
+		if(buf) {
+			buf->start();
 		}
-	};
-	runIfDefined(main.get());
-	runIfDefined(channel0.get());
-	runIfDefined(channel1.get());
-	runIfDefined(channel2.get());
-	runIfDefined(channel3.get());
-	
-	auto renderIfDefined = [] (Renderer* renderer) {
-		if(renderer) {
-			renderer->render();
-		}
-	};
+	}
 	
 	while(!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		
-		renderIfDefined(main.get());
-		renderIfDefined(channel0.get());
-		renderIfDefined(channel1.get());
-		renderIfDefined(channel2.get());
-		renderIfDefined(channel3.get());
+		image->render();
+		for(auto& buf : bufs) {
+			if(buf) {
+				buf->render();
+			}
+		}
 		
 		glfwSwapBuffers(window);
 	}
@@ -108,7 +115,8 @@ void Application::onGlfwError(int error, const char* description) {
 }
 
 void Application::onWindowResize(GLFWwindow*, int width, int height) {
-	glViewport(0, 0, width, height); // FIXME
+	glViewport(0, 0, width, height);
+	Renderer::onWindowResize(width, height);
 }
 
 }
