@@ -53,7 +53,7 @@ Application::Application(const Configuration& config)
 	image = std::unique_ptr<Renderer> {new Renderer {config, Renderer::Target::Image, window}};
 	for(std::size_t i = 0; i < bufs.size(); i++) {
 		auto& buf = bufs[i];
-		if(config.channels[i]) {
+		if(config.bufs[i].filename) {
 			buf = std::unique_ptr<Renderer> {new Renderer {config, static_cast<Renderer::Target>(i), window}};
 		}
 	}
@@ -70,16 +70,12 @@ void Application::run() {
 		}
 	};
 	
-	fileWatcher.add(config.file, [this] {
-		image->reloadFile();
-	});
 	for(std::size_t i = 0; i < bufs.size(); i++) {
 		auto& buf = bufs[i];
-		const auto& file = config.channels[i];
+		const auto& filename = config.bufs[i].filename;
 		
 		if(buf) {
-			assert(file);
-			fileWatcher.add(*file, [&buf] {
+			fileWatcher.add(*filename, [&buf] {
 				buf->reloadFile();
 			});
 		}

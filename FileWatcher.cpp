@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <iostream>
 
+#include "Utils.h"
+
 namespace RunFragment {
 
 void FileWatcher::add(std::string path, std::function<void()> callback) {
@@ -28,8 +30,8 @@ void FileWatcher::run() {
 		
 		auto wd = inotify_add_watch(fd, path.c_str(), IN_CLOSE_WRITE);
 		if(wd == -1) {
-			bool tryAccess = (access(path.c_str(), F_OK) != -1);
-			if(!tryAccess) {
+			bool accessible = Utils::isFileAccessible(path);
+			if(!accessible) {
 				std::cerr << "Error: can't monitor file '" << path << "'" << std::endl;
 				continue;
 			}

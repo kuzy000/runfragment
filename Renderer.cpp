@@ -15,8 +15,8 @@ Renderer::Renderer(const Configuration& config, Target target, GLFWwindow* windo
 	: config {config}
 	, target {target}
 	, window {window}
-	, path {target == Target::Image ? config.file 
-	      : *config.channels[static_cast<std::size_t>(target)]} {
+	, path {target == Target::Image ? *config.image.filename
+	      : *config.bufs[static_cast<std::size_t>(target)].filename} {
 	const GLfloat vertices[] = {
 		 1.0f,  1.0f,
 		 1.0f, -1.0f,
@@ -207,7 +207,7 @@ void Renderer::reloadFile() {
 		changed = true;
 	}
 	else {
-		std::cerr << "Error: can't open file '" << config.file << "'" << std::endl;
+		std::cerr << "Error: can't open file '" << path << "'" << std::endl;
 	}
 }
 
@@ -276,7 +276,7 @@ GLuint Renderer::compileShader(GLenum type, const std::string& source) {
 		std::unique_ptr<GLchar[]> errorLog = std::unique_ptr<GLchar[]>(new GLchar[length]);
 		glGetShaderInfoLog(id, sizeof(GLchar) * length, nullptr, errorLog.get());
 
-		std::cerr << config.file << ":" << std::endl;
+		std::cerr << path << ":" << std::endl;
 		std::cerr << errorLog.get() << std::endl;
 
 		id = 0;

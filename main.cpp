@@ -1,6 +1,8 @@
 #include <stdexcept>
 #include <fstream>
 #include <iostream>
+#include <string>
+#include <algorithm>
 
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/parsers.hpp>
@@ -9,130 +11,134 @@
 
 #include "Application.h"
 #include "Configuration.h"
-
-const std::string shaderToy = 
-R"raw(
-time = 1
-main = mainImage
-add-uniforms = true
-
-iResolution = iResolution
-iGlobalTime = iGlobalTime
-iGlobalDelta = iGlobalDelta
-iGlobalFrame = iGlobalFrame
-iChannelTime = iChannelTime
-iMouse = iMouse
-iDate = iDate
-iSampleRate = iSampleRate
-iChannelResolution = iChannelResolution
-iChannel = iChannel
-iSurfacePosition = iSurfacePosition
-)raw";
-
-const std::string glslSandbox = 
-R"raw(
-time = 1
-main = none
-add-uniforms = false
-
-iResolution = resolution
-iGlobalTime = time
-iGlobalDelta = iGlobalDelta
-iGlobalFrame = iGlobalFrame
-iChannelTime = iChannelTime
-iMouse = mouse
-iDate = iDate
-iSampleRate = iSampleRate
-iChannelResolution = iChannelResolution
-iChannel = iChannel
-iSurfacePosition = surfacePosition
-)raw";
-
+#include "Option.h"
+#include "StandartConfig.h"
+#include "Utils.h"
 
 namespace po = boost::program_options;
 
 po::variables_map parseArguments(int argc, char* argv[], po::options_description desc) {
+	using namespace RunFragment;
+	
 	po::positional_options_description pos;
-	pos.add("file", 1);
+	pos.add(Option::image, 1);
 
 	po::variables_map vm;
 	auto parser = po::command_line_parser(argc, argv).options(desc).positional(pos);
 	po::store(parser.run(), vm);
 	
-	if(vm.count("config")) {
-		std::ifstream iniFile {vm["config"].as<std::string>()};
-		po::store(po::parse_config_file(iniFile, desc, true), vm);  
+	if(vm.count(Option::help)) {
+		return vm;
 	}
 	
-	if(vm.count("format")) {
+	if(vm.count(Option::format)) {
 		auto arg = vm["format"].as<std::string>();
 		if(arg == "s") {
-			std::istringstream ss {shaderToy};
+			std::istringstream ss {StandartConfig::shaderToy};
 			po::store(po::parse_config_file(ss, desc, true), vm);
 		}
 		else if(arg == "g") {
-			std::istringstream ss {glslSandbox};
+			std::istringstream ss {StandartConfig::glslSandbox};
 			po::store(po::parse_config_file(ss, desc, true), vm);
 		}
 		else {
-			throw std::runtime_error {"invalid argument of '--format'"};
+			throw std::runtime_error {std::string {"invalid argument of '--"} + Option::format.operator std::string() + "'"};
 		}
 	}
 	else {
-		std::istringstream ss {shaderToy};
+		std::istringstream ss {StandartConfig::defaultConfig};
 		po::store(po::parse_config_file(ss, desc, true), vm);
 	}
 	
-	if(!vm.count("file") && !vm.count("help")) {
-		throw std::runtime_error {"file doesn't specified; try '--help'"};
+	if(vm.count(Option::config)) {
+		auto path = vm[Option::config].as<std::string>();
+		if(!Utils::isFileAccessible(path)) {
+			throw std::runtime_error {"can't open config file"};
+		}
+		std::ifstream file {path};
+		po::store(po::parse_config_file(file, desc, true), vm);  
+	}
+	else {
+		if(!vm.count(Option::image)) {
+			throw std::runtime_error {"neither config nor Image specified"};
+		}
 	}
 	
 	return vm;
 }
 
-int main(int argc, char* argv[]) {
-	po::options_description gen;
-	gen.add_options()
-		("file",         po::value<std::string>(),                "Input file")
-		("config,c",     po::value<std::string>(),                "Config file")
-		("time,t",       po::value<float>(),                      "Set value that multiplies the time")
-		("help,h",                                                "Display help message")
-		("format,f",     po::value<std::string>(),                "Format of file:\n    g : GLSLSandbox\n    s : ShaderToy (default)")
-		("main",         po::value<std::string>(),                "Set name of mainImage(out vec4, in vec2) function; 'none' if not used")
-		("add-uniforms", po::bool_switch()->default_value(false), "Add uniforms to begining of the file")
-		("channel0",     po::value<std::string>(),                "Set channel0 data (shader); 'none' if not used")
-		("channel1",     po::value<std::string>(),                "Set channel1 data (shader); 'none' if not used")
-		("channel2",     po::value<std::string>(),                "Set channel2 data (shader); 'none' if not used")
-		("channel3",     po::value<std::string>(),                "Set channel3 data (shader); 'none' if not used");
-
-	po::options_description uni;
-	uni.add_options()
-		("iResolution",        po::value<std::string>(), "Set name of iResolution uniform")
-		("iGlobalTime",        po::value<std::string>(), "Set name of iGlobalTime uniform")
-//		("iGlobalDelta",       po::value<std::string>(), "Set name of iGlobalDelta uniform")
-//		("iGlobalFrame",       po::value<std::string>(), "Set name of iGlobalFrame uniform")
-//		("iChannelTime",       po::value<std::string>(), "Set name of iChannelTime uniform")
-		("iMouse",             po::value<std::string>(), "Set name of iMouse uniform")
-		("iDate",              po::value<std::string>(), "Set name of iDate uniform")
-//		("iSampleRate",        po::value<std::string>(), "Set name of iSampleRate uniform")
-//		("iChannelResolution", po::value<std::string>(), "Set name of iChannelResolution uniform")
-		("iChannel",           po::value<std::string>(), "Set name of iChannelN uniform")
-		("iSurfacePosition",   po::value<std::string>(), "Set name of iSurfacePosition varying");
+RunFragment::Configuration vmToConfiguraion(const po::variables_map& vm) {
+	using namespace RunFragment;
 	
-	po::options_description unimpl;
-	unimpl.add_options()
-		("iGlobalDelta",       po::value<std::string>(), "Set name of iGlobalDelta uniform")
-		("iGlobalFrame",       po::value<std::string>(), "Set name of iGlobalFrame uniform")
-		("iChannelTime",       po::value<std::string>(), "Set name of iChannelTime uniform")
-		("iSampleRate",        po::value<std::string>(), "Set name of iSampleRate uniform")
-		("iChannelResolution", po::value<std::string>(), "Set name of iChannelResolution uniform");
+	const auto lookupOptional = [&vm] (std::string name) -> boost::optional<std::string> {
+		if(vm.count(name) && vm[name].as<std::string>() != "none") {
+			return vm[name].as<std::string>();
+		}
+		else {
+			return boost::none;
+		}
+	};
+	
+	const auto lookupString = [&vm] (std::string name) -> std::string {
+		return vm[name].as<std::string>();
+	};
+	
+	const auto lookupBuf = [&vm, &lookupOptional] (std::string name, const std::array<Option::WithPostfix, 4>& optionChannels) -> Configuration::BufType {
+		Configuration::BufType buf;
+		buf.filename = lookupOptional(name);
+		for(std::size_t i = 0; i < buf.channels.size(); i++) {
+			auto& channel = buf.channels[i];
+			const auto valueOptional = lookupOptional(optionChannels[i]);
+			if(valueOptional) {
+				const auto value = *valueOptional;
+				const auto it = std::find(Option::bufs.begin(), Option::bufs.end(), Option::WithPostfix {value});
+				
+				if(it == Option::bufs.end()) {
+					throw std::runtime_error {std::string {"invalid argument of '--"} + optionChannels[i].operator std::string() + "'"};
+				}
+				
+				channel = static_cast<Configuration::Buf>(std::distance(Option::bufs.begin(), it));
+			}
+		}
+		return buf;
+	};
+	
+	Configuration config;
+	
+	config.image = lookupBuf(Option::image, Option::imageChannels);
+	for(std::size_t i = 0; i < config.bufs.size(); i++) {
+		config.bufs[i] = lookupBuf(Option::bufs[i], Option::bufChannels[i]);
+	}
+	
+	float time;
+	boost::optional<std::string> main;
+	bool addUniforms;
 
-	po::options_description desc;
-	desc.add(gen).add(uni).add(unimpl);
+	config.time = vm[Option::time].as<float>();
+	config.main = lookupOptional(Option::main);
+	config.addUniforms = vm[Option::addUniform].as<bool>();
 
+	config.iResolution        = lookupString(Option::iResolution);
+	config.iGlobalTime        = lookupString(Option::iGlobalTime);
+	config.iGlobalDelta       = lookupString(Option::iGlobalDelta);
+	config.iGlobalFrame       = lookupString(Option::iGlobalFrame);
+	config.iChannelTime       = lookupString(Option::iChannelTime);
+	config.iMouse             = lookupString(Option::iMouse);
+	config.iDate              = lookupString(Option::iDate);
+	config.iSampleRate        = lookupString(Option::iSampleRate);
+	config.iChannelResolution = lookupString(Option::iChannelResolution);
+	config.iChannel           = lookupString(Option::iChannel);
+	config.iSurfacePosition   = lookupString(Option::iSurfacePosition);
+	
+	return config;
+}
+
+int main(int argc, char* argv[]) {
+	using namespace RunFragment;
+	
 	po::variables_map vm;
 	try {
-		vm = parseArguments(argc, argv, desc);
+		vm = parseArguments(argc, argv, Option::parsingOptions);
 	}
 	catch(std::exception& e) {
 		std::cerr << "Error: " << e.what() << std::endl;
@@ -140,11 +146,9 @@ int main(int argc, char* argv[]) {
 		return EXIT_FAILURE;
 	}
 	
-	if(vm.count("help")) {
-		po::options_description help;
-		help.add(gen).add(uni);
+	if(vm.count(Option::help)) {
 		std::cout << "Usage: run_fragment [options] file" << std::endl;
-		std::cout << help << std::endl;
+		std::cout << Option::helpOptions << std::endl;
 
 		return EXIT_SUCCESS;
 	}
@@ -158,35 +162,15 @@ int main(int argc, char* argv[]) {
 		}
 	};
 	
-	RunFragment::Configuration config;
 	
-	config.file = vm["file"].as<std::string>();
-	config.time = vm["time"].as<float>();
-	config.main = lookupOptional("main");
-	config.addUniforms = vm["add-uniforms"].as<bool>();
-	config.channels[0] = lookupOptional("channel0");
-	config.channels[1] = lookupOptional("channel1");
-	config.channels[2] = lookupOptional("channel2");
-	config.channels[3] = lookupOptional("channel3");
-
-	config.iResolution = vm["iResolution"].as<std::string>();
-	config.iGlobalTime = vm["iGlobalTime"].as<std::string>();
-	config.iGlobalDelta = vm["iGlobalDelta"].as<std::string>();
-	config.iGlobalFrame = vm["iGlobalFrame"].as<std::string>();
-	config.iChannelTime = vm["iChannelTime"].as<std::string>();
-	config.iMouse = vm["iMouse"].as<std::string>();
-	config.iDate = vm["iDate"].as<std::string>();
-	config.iSampleRate = vm["iSampleRate"].as<std::string>();
-	config.iChannelResolution = vm["iChannelResolution"].as<std::string>();
-	config.iChannel = vm["iChannel"].as<std::string>();
-	config.iSurfacePosition = vm["iSurfacePosition"].as<std::string>();
+	const Configuration config = vmToConfiguraion(vm);
 
 	try {
 		RunFragment::Application application {config};
 		application.run();
 	}
 	catch(std::exception& e) {
-		std::cerr << e.what() << std::endl;
+		std::cerr << "Error: " << e.what() << std::endl;
 
 		return EXIT_FAILURE;
 	}
