@@ -18,6 +18,10 @@ public:
 	WithPostfix(std::string value, std::string postfix)
 		: value {std::move(value)}, full {this->value + "," + std::move(postfix)} {}
 	
+	bool operator ==(const WithPostfix& rhs) const {
+		return value == rhs.value;
+	}
+	
 	operator std::string() const {
 		return value;
 	}

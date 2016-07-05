@@ -36,6 +36,7 @@ private:
 	
 	const Configuration& config;
 	const Target target;
+	const Configuration::BufType& thisBuf;
 	const std::string path;
 	
 	GLFWwindow* window;

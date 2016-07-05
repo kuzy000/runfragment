@@ -15,8 +15,9 @@ Renderer::Renderer(const Configuration& config, Target target, GLFWwindow* windo
 	: config {config}
 	, target {target}
 	, window {window}
-	, path {target == Target::Image ? *config.image.filename
-	      : *config.bufs[static_cast<std::size_t>(target)].filename} {
+	, thisBuf {target == Target::Image ? config.image
+	                                   : config.bufs[static_cast<std::size_t>(target)]}
+	, path {*thisBuf.filename} {
 	const GLfloat vertices[] = {
 		 1.0f,  1.0f,
 		 1.0f, -1.0f,
@@ -121,19 +122,28 @@ void Renderer::render() {
 	glUseProgram(program);
 	glBindVertexArray(vao);
 	
-	auto uniformSamplerIfDefined = [this] (int num) {
-		if(sharedData.texs[num] != 0) {
+//	auto uniformSamplerIfDefined = [this] (int num) {
+//		if(sharedData.texs[num] != 0) {
+//			glActiveTexture(GL_TEXTURE0 + num);
+//			glBindTexture(GL_TEXTURE_2D, sharedData.texs[num]);
+
+//			glUniform1i(iChannels[num], num);
+//		}
+//	};
+	
+	for(std::size_t i = 0; i < thisBuf.channels.size(); i++) {
+		if(auto channelBufPtr = boost::get<Configuration::Buf>(&thisBuf.channels[i])) {
+			auto num = static_cast<std::size_t>(*channelBufPtr);
 			glActiveTexture(GL_TEXTURE0 + num);
 			glBindTexture(GL_TEXTURE_2D, sharedData.texs[num]);
-
-			glUniform1i(iChannels[num], num);
-		}
-	};
 	
-	uniformSamplerIfDefined(0);
-	uniformSamplerIfDefined(1);
-	uniformSamplerIfDefined(2);
-	uniformSamplerIfDefined(3);
+			glUniform1i(iChannels[i], num);
+		}
+	}
+//	uniformSamplerIfDefined(0);
+//	uniformSamplerIfDefined(1);
+//	uniformSamplerIfDefined(2);
+//	uniformSamplerIfDefined(3);
 	
 	GLfloat globalTime = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(std::chrono::high_resolution_clock::now() - startTime).count();
 	glUniform1f(iGlobalTime, globalTime * config.time);

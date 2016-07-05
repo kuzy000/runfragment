@@ -147,7 +147,7 @@ int main(int argc, char* argv[]) {
 	}
 	
 	if(vm.count(Option::help)) {
-		std::cout << "Usage: run_fragment [options] file" << std::endl;
+		std::cout << "Usage: run_fragment [options] [Image_shader]" << std::endl;
 		std::cout << Option::helpOptions << std::endl;
 
 		return EXIT_SUCCESS;
