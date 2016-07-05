@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Configuration.h"
+#include "AppConfig.h"
 #include "OnScopeEnd.h"
 #include "Renderer.h"
 
@@ -15,14 +15,14 @@ namespace RunFragment {
 
 class Application {
 public:
-	Application(const Configuration& config);
+	Application(AppConfig config);
 	
 	void run();
 private:
 	static void onGlfwError(int error, const char* description);
 	static void onWindowResize(GLFWwindow*, int width, int height);
 	
-	const Configuration config;
+	const AppConfig config;
 	
 	std::unique_ptr<Renderer> image;
 	std::array<std::unique_ptr<Renderer>, 4> bufs {};

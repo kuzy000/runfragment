@@ -11,13 +11,12 @@ namespace RunFragment {
 
 Renderer::SharedData Renderer::sharedData;
 
-Renderer::Renderer(const Configuration& config, Target target, GLFWwindow* window)
+Renderer::Renderer(const AppConfig& config, Target target, GLFWwindow* window)
 	: config {config}
+	, renderConfig {target == Target::Image ? *config.image
+	                                        : *config.bufs[static_cast<std::size_t>(target)]}
 	, target {target}
-	, window {window}
-	, thisBuf {target == Target::Image ? config.image
-	                                   : config.bufs[static_cast<std::size_t>(target)]}
-	, path {*thisBuf.filename} {
+	, window {window} {
 	const GLfloat vertices[] = {
 		 1.0f,  1.0f,
 		 1.0f, -1.0f,
@@ -81,25 +80,27 @@ Renderer::Renderer(const Configuration& config, Target target, GLFWwindow* windo
 		glDeleteProgram(program);
 	});
 	
-	glGenFramebuffers(1, &fbo);
-	onDestruction.push([this] {
-		glDeleteFramebuffers(1, &fbo);
-	});
+	if(target != Target::Image) {
+		glGenFramebuffers(1, &fbo);
+		onDestruction.push([this] {
+			glDeleteFramebuffers(1, &fbo);
+		});
+		
+		glGenTextures(1, &tex);
+		onDestruction.push([this] {
+			glDeleteTextures(1, &tex);
+		});
 	
-	glGenTextures(1, &tex);
-	onDestruction.push([this] {
-		glDeleteTextures(1, &tex);
-	});
-
-	glBindTexture(GL_TEXTURE_2D, tex);
-	
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+		glBindTexture(GL_TEXTURE_2D, tex);
+		
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+		
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+	}
 }
 
 void Renderer::start() {
@@ -122,28 +123,18 @@ void Renderer::render() {
 	glUseProgram(program);
 	glBindVertexArray(vao);
 	
-//	auto uniformSamplerIfDefined = [this] (int num) {
-//		if(sharedData.texs[num] != 0) {
-//			glActiveTexture(GL_TEXTURE0 + num);
-//			glBindTexture(GL_TEXTURE_2D, sharedData.texs[num]);
-
-//			glUniform1i(iChannels[num], num);
-//		}
-//	};
-	
-	for(std::size_t i = 0; i < thisBuf.channels.size(); i++) {
-		if(auto channelBufPtr = boost::get<Configuration::Buf>(&thisBuf.channels[i])) {
-			auto num = static_cast<std::size_t>(*channelBufPtr);
+	for(std::size_t i = 0; i < renderConfig.channels.size(); i++) {
+		const Channel* channel = renderConfig.channels[i].get();
+		
+		if(const auto channelBuf = dynamic_cast<const ChannelBuf*>(channel)) {
+			const auto num = static_cast<std::size_t>(channelBuf->kind);
+			
 			glActiveTexture(GL_TEXTURE0 + num);
 			glBindTexture(GL_TEXTURE_2D, sharedData.texs[num]);
 	
 			glUniform1i(iChannels[i], num);
 		}
 	}
-//	uniformSamplerIfDefined(0);
-//	uniformSamplerIfDefined(1);
-//	uniformSamplerIfDefined(2);
-//	uniformSamplerIfDefined(3);
 	
 	GLfloat globalTime = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(std::chrono::high_resolution_clock::now() - startTime).count();
 	glUniform1f(iGlobalTime, globalTime * config.time);
@@ -183,7 +174,7 @@ void Renderer::render() {
 void Renderer::reloadFile() {
 	std::lock_guard<std::mutex> guard {sourceChanging};
 	
-	std::ifstream file {path};
+	std::ifstream file {renderConfig.path};
 	
 	if(file.is_open()) {
 		std::stringstream ss;
@@ -217,7 +208,7 @@ void Renderer::reloadFile() {
 		changed = true;
 	}
 	else {
-		std::cerr << "Error: can't open file '" << path << "'" << std::endl;
+		std::cerr << "Error: can't open file '" << renderConfig.path << "'" << std::endl;
 	}
 }
 
@@ -227,7 +218,7 @@ void Renderer::reloadShader() {
 	if(changed) {
 		GLuint newFragment = compileShader(GL_FRAGMENT_SHADER, fragmentSource);
 		if(newFragment != 0) {
-			std::cout << path << ": OK" << std::endl;
+			std::cout << target << " [ " << renderConfig.path << " ]: OK" << std::endl;
 			if(fragment != 0) {
 				glDeleteShader(fragment);
 			}
@@ -286,13 +277,20 @@ GLuint Renderer::compileShader(GLenum type, const std::string& source) {
 		std::unique_ptr<GLchar[]> errorLog = std::unique_ptr<GLchar[]>(new GLchar[length]);
 		glGetShaderInfoLog(id, sizeof(GLchar) * length, nullptr, errorLog.get());
 
-		std::cerr << path << ":" << std::endl;
+		std::cerr << target << " [ " << renderConfig.path << " ]:" << std::endl;
 		std::cerr << errorLog.get() << std::endl;
 
 		id = 0;
 	}
 
 	return id;
+}
+
+std::ostream& operator << (std::ostream& os, Renderer::Target target) {
+	std::array<std::string, 5> targets {{ "Image",  "BufA",  "BufB",  "BufC", "BufD" }};
+	os << targets.at(static_cast<std::size_t>(target) + 1);
+	
+	return os;
 }
 
 }

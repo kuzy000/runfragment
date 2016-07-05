@@ -10,7 +10,8 @@
 #include <boost/program_options/variables_map.hpp>
 
 #include "Application.h"
-#include "Configuration.h"
+#include "AppConfig.h"
+#include "Channel.h"
 #include "Option.h"
 #include "StandartConfig.h"
 #include "Utils.h"
@@ -67,7 +68,7 @@ po::variables_map parseArguments(int argc, char* argv[], po::options_description
 	return vm;
 }
 
-RunFragment::Configuration vmToConfiguraion(const po::variables_map& vm) {
+RunFragment::AppConfig vmToConfiguraion(const po::variables_map& vm) {
 	using namespace RunFragment;
 	
 	const auto lookupOptional = [&vm] (std::string name) -> boost::optional<std::string> {
@@ -83,31 +84,39 @@ RunFragment::Configuration vmToConfiguraion(const po::variables_map& vm) {
 		return vm[name].as<std::string>();
 	};
 	
-	const auto lookupBuf = [&vm, &lookupOptional] (std::string name, const std::array<Option::WithPostfix, 4>& optionChannels) -> Configuration::BufType {
-		Configuration::BufType buf;
-		buf.filename = lookupOptional(name);
-		for(std::size_t i = 0; i < buf.channels.size(); i++) {
-			auto& channel = buf.channels[i];
+	const auto lookupRenderConfig = [&vm, &lookupOptional] (std::string name, const std::array<Option::WithPostfix, 4>& optionChannels) -> boost::optional<RenderConfig> {
+		auto path = lookupOptional(name);
+		if(!path) {
+			return boost::none;
+		}
+		
+		RenderConfig renderConfig {*path};
+		
+		for(std::size_t i = 0; i < renderConfig.channels.size(); i++) {
+			auto& channel = renderConfig.channels[i];
 			const auto valueOptional = lookupOptional(optionChannels[i]);
+			
 			if(valueOptional) {
-				const auto value = *valueOptional;
-				const auto it = std::find(Option::bufs.begin(), Option::bufs.end(), Option::WithPostfix {value});
+				const std::string value = *valueOptional;
 				
-				if(it == Option::bufs.end()) {
+				channel = Channel::fromString(value);
+				
+				if(!channel) {
 					throw std::runtime_error {std::string {"invalid argument of '--"} + optionChannels[i].operator std::string() + "'"};
 				}
-				
-				channel = static_cast<Configuration::Buf>(std::distance(Option::bufs.begin(), it));
+			}
+			else {
+				channel = nullptr;
 			}
 		}
-		return buf;
+		return renderConfig;
 	};
 	
-	Configuration config;
+	AppConfig config;
 	
-	config.image = lookupBuf(Option::image, Option::imageChannels);
+	config.image = lookupRenderConfig(Option::image, Option::imageChannels);
 	for(std::size_t i = 0; i < config.bufs.size(); i++) {
-		config.bufs[i] = lookupBuf(Option::bufs[i], Option::bufChannels[i]);
+		config.bufs[i] = lookupRenderConfig(Option::bufs[i], Option::bufChannels[i]);
 	}
 	
 	float time;
@@ -162,11 +171,8 @@ int main(int argc, char* argv[]) {
 		}
 	};
 	
-	
-	const Configuration config = vmToConfiguraion(vm);
-
 	try {
-		RunFragment::Application application {config};
+		Application application {vmToConfiguraion(vm)};
 		application.run();
 	}
 	catch(std::exception& e) {

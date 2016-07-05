@@ -15,8 +15,8 @@
 
 namespace RunFragment {
 
-Application::Application(const Configuration& config)
-	: config (config) {
+Application::Application(AppConfig configMoved)
+	: config (std::move(configMoved)) {
 	
 	glfwSetErrorCallback(&Application::onGlfwError);
 	
@@ -53,7 +53,7 @@ Application::Application(const Configuration& config)
 	image = std::unique_ptr<Renderer> {new Renderer {config, Renderer::Target::Image, window}};
 	for(std::size_t i = 0; i < bufs.size(); i++) {
 		auto& buf = bufs[i];
-		if(config.bufs[i].filename) {
+		if(config.bufs[i]) {
 			buf = std::unique_ptr<Renderer> {new Renderer {config, static_cast<Renderer::Target>(i), window}};
 		}
 	}
@@ -70,12 +70,15 @@ void Application::run() {
 		}
 	};
 	
+	fileWatcher.add(config.image->path, [this] {
+		image->reloadFile();
+	});
+	
 	for(std::size_t i = 0; i < bufs.size(); i++) {
 		auto& buf = bufs[i];
-		const auto& filename = config.bufs[i].filename;
-		
 		if(buf) {
-			fileWatcher.add(*filename, [&buf] {
+			const auto& path = config.bufs[i]->path;
+			fileWatcher.add(path, [&buf] {
 				buf->reloadFile();
 			});
 		}

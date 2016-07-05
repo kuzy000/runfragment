@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Configuration.h"
+#include "AppConfig.h"
 #include "OnScopeEnd.h"
 
 #include <mutex>
@@ -22,7 +22,7 @@ public:
 		BufD = 3,
 	};
 	
-	Renderer(const Configuration& config, Target target, GLFWwindow* window);
+	Renderer(const AppConfig& config, Target target, GLFWwindow* window);
 	
 	void start();
 	void render();
@@ -34,10 +34,9 @@ private:
 	
 	GLuint compileShader(GLenum type, const std::string& source);
 	
-	const Configuration& config;
+	const AppConfig& config;
+	const RenderConfig& renderConfig;
 	const Target target;
-	const Configuration::BufType& thisBuf;
-	const std::string path;
 	
 	GLFWwindow* window;
 	
@@ -77,6 +76,8 @@ private:
 	
 	OnScopeEnd onDestruction;
 };
+
+std::ostream& operator << (std::ostream& os, Renderer::Target target);
 
 }
 
