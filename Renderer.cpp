@@ -286,7 +286,7 @@ GLuint Renderer::compileShader(GLenum type, const std::string& source) {
 	return id;
 }
 
-std::ostream& operator << (std::ostream& os, Renderer::Target target) {
+std::ostream& operator <<(std::ostream& os, Renderer::Target target) {
 	std::array<std::string, 5> targets {{ "Image",  "BufA",  "BufB",  "BufC", "BufD" }};
 	os << targets.at(static_cast<std::size_t>(target) + 1);
 	

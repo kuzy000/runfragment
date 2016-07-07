@@ -77,7 +77,7 @@ private:
 	OnScopeEnd onDestruction;
 };
 
-std::ostream& operator << (std::ostream& os, Renderer::Target target);
+std::ostream& operator <<(std::ostream& os, Renderer::Target target);
 
 }
 
