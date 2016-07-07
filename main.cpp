@@ -162,15 +162,6 @@ int main(int argc, char* argv[]) {
 		return EXIT_SUCCESS;
 	}
 	
-	auto lookupOptional = [&vm] (std::string name) -> boost::optional<std::string> {
-		if(vm.count(name) && vm[name].as<std::string>() != "none") {
-			return vm[name].as<std::string>();
-		}
-		else {
-			return boost::none;
-		}
-	};
-	
 	try {
 		Application application {vmToConfiguraion(vm)};
 		application.run();
