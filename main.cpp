@@ -84,7 +84,7 @@ RunFragment::AppConfig vmToConfiguraion(const po::variables_map& vm) {
 		return vm[name].as<std::string>();
 	};
 	
-	const auto lookupRenderConfig = [&vm, &lookupOptional] (std::string name, const std::array<Option::WithPostfix, 4>& optionChannels) -> boost::optional<RenderConfig> {
+	const auto lookupRenderConfig = [&vm, &lookupOptional] (std::string name, const std::array<Parameter, 4>& optionChannels) -> boost::optional<RenderConfig> {
 		auto path = lookupOptional(name);
 		if(!path) {
 			return boost::none;
