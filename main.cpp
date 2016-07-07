@@ -33,7 +33,7 @@ po::variables_map parseArguments(int argc, char* argv[], po::options_description
 	}
 	
 	if(vm.count(Option::format)) {
-		auto arg = vm["format"].as<std::string>();
+		auto arg = vm[Option::format].as<std::string>();
 		if(arg == "s") {
 			std::istringstream ss {StandartConfig::shaderToy};
 			po::store(po::parse_config_file(ss, desc, true), vm);
@@ -43,7 +43,7 @@ po::variables_map parseArguments(int argc, char* argv[], po::options_description
 			po::store(po::parse_config_file(ss, desc, true), vm);
 		}
 		else {
-			throw std::runtime_error {std::string {"invalid argument of '--"} + Option::format.operator std::string() + "'"};
+			throw po::validation_error {po::validation_error::invalid_option_value, Option::format, arg};
 		}
 	}
 	else {
@@ -94,19 +94,10 @@ RunFragment::AppConfig vmToConfiguraion(const po::variables_map& vm) {
 		
 		for(std::size_t i = 0; i < renderConfig.channels.size(); i++) {
 			auto& channel = renderConfig.channels[i];
-			const auto valueOptional = lookupOptional(optionChannels[i]);
+			const std::string& channelName = optionChannels[i];
 			
-			if(valueOptional) {
-				const std::string value = *valueOptional;
-				
-				channel = Channel::fromString(value);
-				
-				if(!channel) {
-					throw std::runtime_error {std::string {"invalid argument of '--"} + optionChannels[i].operator std::string() + "'"};
-				}
-			}
-			else {
-				channel = nullptr;
+			if(vm.count(channelName)) {
+				channel = std::unique_ptr<Channel> {vm[channelName].as<Channel*>()};
 			}
 		}
 		return renderConfig;
@@ -151,6 +142,7 @@ int main(int argc, char* argv[]) {
 	}
 	catch(std::exception& e) {
 		std::cerr << "Error: " << e.what() << std::endl;
+		std::cerr << "Try '--" << Option::help << "'" << std::endl;
 
 		return EXIT_FAILURE;
 	}

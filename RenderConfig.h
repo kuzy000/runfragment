@@ -38,7 +38,7 @@ struct RenderConfig {
 	}
 	
 	std::string path;
-	std::array<std::unique_ptr<Channel>, 4> channels;
+	std::array<std::unique_ptr<Channel>, 4> channels {nullptr};
 };
 
 }

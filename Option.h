@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Parameter.h"
+#include "Channel.h"
 
 #include <string>
 #include <array>
@@ -92,14 +93,17 @@ const po::options_description parsingOptions = [] {
 		(image.getPo(),                     po::value<std::string>(), "Set Image shader file");
 	
 	for(std::size_t i = 0; i < imageChannels.size(); i++) {
-		buffersChannels.add_options()(imageChannels.at(i).getPo(), po::value<std::string>());
+		buffersChannels.add_options()
+			(imageChannels.at(i).getPo(), po::value<Channel*>());
 	}
 	
 	for(std::size_t i = 0; i < bufs.size(); i++) {
-		buffersChannels.add_options()(bufs.at(i).getPo(), po::value<std::string>());
+		buffersChannels.add_options()
+			(bufs.at(i).getPo(), po::value<std::string>());
 		
 		for(std::size_t j = 0; j < std::tuple_size<decltype(bufChannels)::value_type>::value; j++) {
-			buffersChannels.add_options()(bufChannels.at(i).at(j).getPo(), po::value<std::string>());
+			buffersChannels.add_options()
+				(bufChannels.at(i).at(j).getPo(), po::value<Channel*>());
 		}
 	}
 	
