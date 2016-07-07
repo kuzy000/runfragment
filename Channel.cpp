@@ -26,6 +26,12 @@ void validate(boost::any& value, const std::vector<std::string>& args, Channel**
 	namespace po = boost::program_options;
 	
 	const std::string& arg = po::validators::get_single_string(args);
+	
+	if(arg == "none") {
+		value = boost::any {static_cast<Channel*>(nullptr)};
+		return;
+	}
+	
 	auto channel = Channel::fromStringRaw(arg);
 	
 	if(channel) {
