@@ -2,6 +2,7 @@
 
 #include "Parameter.h"
 #include "Channel.h"
+#include "AllowedURI.h"
 
 #include <string>
 #include <array>
@@ -9,6 +10,7 @@
 
 namespace RunFragment {
 namespace Option {
+
 
 const Parameter image {"Image", 'i'};
 const std::array<Parameter, 4> imageChannels = {{
@@ -25,6 +27,7 @@ const std::array<std::array<Parameter, 4>, 4> bufChannels =
 }};
 
 const Parameter config {"config", 'c'};
+const Parameter download = {"download", 'd'};
 const Parameter time {"time", 't'};
 const Parameter help {"help", 'h'};
 const Parameter format {"format", 'f'};
@@ -48,8 +51,9 @@ namespace po = boost::program_options;
 const po::options_description helpOptions = [] {
 	po::options_description general {"General"};
 	general.add_options()
-		(config.getPo(), po::value<std::string>(), "Config file")
-		(help.getPo(),                             "Display help message");
+		(config.getPo(),   po::value<std::string>(), "Config file")
+//		(download.getPo(), po::value<AllowedURI*>(),  "Download a project from shadertoy.com or glslsanbox.com")
+		(help.getPo(),                               "Display help message");
 	
 	po::options_description buffersChannels {"Buffers and their channels"};
 	buffersChannels.add_options()
@@ -85,8 +89,9 @@ const po::options_description helpOptions = [] {
 const po::options_description parsingOptions = [] {
 	po::options_description general {"General"};
 	general.add_options()
-		(config.getPo(), po::value<std::string>(), "Config file")
-		(help.getPo(),                             "Display help message");
+		(config.getPo(),   po::value<std::string>(), "Config file")
+		(download.getPo(), po::value<AllowedURI*>(),  "Download a project from shadertoy.com or glslsanbox.com")
+		(help.getPo(),                               "Display help message");
 	
 	po::options_description buffersChannels {"Buffers and their channels"};
 	buffersChannels.add_options()

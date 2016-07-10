@@ -3,11 +3,15 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <memory>
 
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/positional_options.hpp>
 #include <boost/program_options/variables_map.hpp>
+
+#define BOOST_NETWORK_ENABLE_HTTPS
+#include <boost/network/include/http/client.hpp>
 
 #include "Application.h"
 #include "AppConfig.h"
@@ -28,7 +32,7 @@ po::variables_map parseArguments(int argc, char* argv[], po::options_description
 	auto parser = po::command_line_parser(argc, argv).options(desc).positional(pos);
 	po::store(parser.run(), vm);
 	
-	if(vm.count(Option::help)) {
+	if(vm.count(Option::help) || vm.count(Option::download)) {
 		return vm;
 	}
 	
@@ -148,9 +152,15 @@ int main(int argc, char* argv[]) {
 	}
 	
 	if(vm.count(Option::help)) {
-		std::cout << "Usage: run_fragment [options] [Image_shader]" << std::endl;
+		std::cout << "Usage: " << argv[0] << " [options] [Image_shader]" << std::endl;
 		std::cout << Option::helpOptions << std::endl;
 
+		return EXIT_SUCCESS;
+	}
+	
+	if(vm.count(Option::download)) {
+		auto uri = std::unique_ptr<AllowedURI> {vm[Option::download].as<AllowedURI*>()};
+		
 		return EXIT_SUCCESS;
 	}
 	
