@@ -9,6 +9,7 @@ namespace RunFragment {
 class AllowedURI : public boost::network::uri::uri {
 public:
 	using uri::uri;
+	virtual ~AllowedURI() = default;
 	
 	static AllowedURI* fromUriRaw(std::string location);
 };

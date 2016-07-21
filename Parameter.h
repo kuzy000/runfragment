@@ -19,6 +19,10 @@ public:
 		return value == rhs.value;
 	}
 	
+	bool operator !=(const Parameter& rhs) const {
+		return !(*this == rhs);
+	}
+	
 	operator std::string() const {
 		return value;
 	}

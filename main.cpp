@@ -13,14 +13,47 @@
 #define BOOST_NETWORK_ENABLE_HTTPS
 #include <boost/network/include/http/client.hpp>
 
+#include <rapidjson/rapidjson.h>
+#include <rapidjson/document.h>
+
 #include "Application.h"
 #include "AppConfig.h"
 #include "Channel.h"
 #include "Option.h"
 #include "StandartConfig.h"
 #include "Utils.h"
+#include "AllowedURI.h"
 
 namespace po = boost::program_options;
+
+void download(const RunFragment::AllowedURI* location) {
+	using namespace RunFragment;
+	using namespace boost::network;
+	using namespace rapidjson;
+	
+	if(dynamic_cast<const GLSLSandboxURI*>(location)) {
+		auto fragment = location->fragment();
+		uri::uri url {"http://glslsandbox.com/item/" + fragment};
+		
+		http::client client;
+		http::client::request request {url};
+		
+		std::cout << "Downloading using GLSLSandbox API..." << std::endl;
+		http::client::response response = client.get(request);
+
+		
+		Document d;
+		if(!d.Parse(response.body().c_str()).HasParseError()) {
+			const auto code = d["code"].GetString();
+			
+			std::string filename = fragment + ".glsl";
+			std::cout << "Saving to: " << filename << std::endl;
+			std::ofstream ofs {filename.c_str()};
+			ofs << "// Downloaded from " << location->string() << std::endl << std::endl;
+			ofs << code << std::endl;
+		}
+	}
+}
 
 po::variables_map parseArguments(int argc, char* argv[], po::options_description desc) {
 	using namespace RunFragment;
@@ -160,6 +193,8 @@ int main(int argc, char* argv[]) {
 	
 	if(vm.count(Option::download)) {
 		auto uri = std::unique_ptr<AllowedURI> {vm[Option::download].as<AllowedURI*>()};
+		
+		download(uri.get());
 		
 		return EXIT_SUCCESS;
 	}

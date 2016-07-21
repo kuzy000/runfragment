@@ -1,3 +1,6 @@
 [submodule "cpp-netlib"]
 	path = cpp-netlib
 	url = https://github.com/cpp-netlib/cpp-netlib
+[submodule "rapidjson"]
+	path = rapidjson
+	url = https://github.com/miloyip/rapidjson

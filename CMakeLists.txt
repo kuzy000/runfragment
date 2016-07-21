@@ -14,9 +14,24 @@ option(CPP-NETLIB_BUILD_EXAMPLES "Build the cpp-netlib project examples." OFF)
 add_subdirectory(cpp-netlib)
 find_package(cppnetlib REQUIRED)
 
+option(RAPIDJSON_BUILD_DOC "Build rapidjson documentation." OFF)
+option(RAPIDJSON_BUILD_EXAMPLES "Build rapidjson examples." OFF)
+option(RAPIDJSON_BUILD_TESTS "Build rapidjson perftests and unittests." OFF)
+add_subdirectory(rapidjson)
+find_package(RapidJSON REQUIRED)
+
 pkg_search_module(GLFW REQUIRED glfw3)
 
-include_directories(${Boost_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS} ${CPPNETLIB_INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR})
+include_directories(
+	${Boost_INCLUDE_DIRS}
+	${OPENGL_INCLUDE_DIRS}
+	${GLEW_INCLUDE_DIRS}
+	${GLFW_INCLUDE_DIRS}
+	${CPPNETLIB_INCLUDE_DIRS}
+	${OPENSSL_INCLUDE_DIR}
+	${RAPIDJSON_INCLUDE_DIRS}
+	rapidjson/include/ # FIXME
+)
 
 add_definitions(-std=c++11)
 
@@ -35,4 +50,5 @@ target_link_libraries(${PROJECT_NAME}
 	${CMAKE_THREAD_LIBS_INIT}
 	${OPENSSL_LIBRARIES}
 	${CPPNETLIB_LIBRARIES}
+	${RAPIDJSON_LIBRARIES}
 )
