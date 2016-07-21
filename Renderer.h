@@ -41,7 +41,7 @@ private:
 	GLFWwindow* window;
 	
 	struct SharedData {
-		std::array<GLuint, 4> texs {0};
+		std::array<GLuint, 4> texs {{0}};
 	};
 	static SharedData sharedData;
 	
@@ -65,7 +65,7 @@ private:
 	GLint iDate = -1; // done
 	GLint iSampleRate = -1;
 	GLint iChannelResolution = -1;
-	std::array<GLint, 4> iChannels {-1}; // done
+	std::array<GLint, 4> iChannels {{-1}}; // done
 	
 	std::mutex sourceChanging;
 	
