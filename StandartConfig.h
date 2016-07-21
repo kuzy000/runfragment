@@ -43,7 +43,7 @@ iChannel = iChannel
 iSurfacePosition = surfacePosition
 )raw";
 
-const std::string& defaultConfig = shaderToy;
+const std::string& defaultConfig = glslSandbox;
 
 }
 }
