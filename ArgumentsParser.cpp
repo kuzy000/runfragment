@@ -97,10 +97,6 @@ RunFragment::AppConfig vmToAppConfig(const boost::program_options::variables_map
 		config.bufs[i] = lookupRenderConfig(Option::bufs[i], Option::bufChannels[i]);
 	}
 	
-	float time;
-	boost::optional<std::string> main;
-	bool addUniforms;
-
 	config.time = vm[Option::time].as<float>();
 	config.main = lookupOptional(Option::main);
 	config.addUniforms = vm[Option::addUniform].as<bool>();
