@@ -10,11 +10,10 @@ AllowedURI* AllowedURI::fromUriRaw(std::string location) {
 	const auto uri = boost::network::uri::uri {location};
 	const auto host = uri.host();
 
-	std::smatch match;
-	if(std::regex_match(host, match, shaderToy)) {
+	if(std::regex_match(host, shaderToy)) {
 		return new ShadertoyURI {std::move(location)};
 	}
-	else if(std::regex_match(host, match, glslSandbox)) {
+	else if(std::regex_match(host, glslSandbox)) {
 		return new GLSLSandboxURI {std::move(location)};
 	}
 	
