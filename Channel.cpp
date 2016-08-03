@@ -2,6 +2,7 @@
 
 #include <array>
 #include <algorithm>
+#include <regex>
 
 namespace RunFragment {
 
@@ -17,6 +18,12 @@ Channel* Channel::fromStringRaw(std::string str) {
 		auto kind = static_cast<ChannelBuf::Kind>(std::distance(bufs.begin(), it));
 		
 		return new ChannelBuf {kind};
+	}
+	
+	std::regex re {"^.*\\.(png|jpg|jpeg|tiff|gif|tga)$"};
+	
+	if(std::regex_match(str, re)) {
+		return new ChannelImage {str};
 	}
 
 	return nullptr;

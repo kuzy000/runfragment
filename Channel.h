@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include <boost/program_options.hpp>
 
 namespace RunFragment {
@@ -24,6 +25,14 @@ public:
 		: kind {kind} {}
 	
 	const Kind kind;
+};
+
+class ChannelImage : public Channel {
+public:
+	ChannelImage(std::string path)
+		: path {std::move(path)} {}
+	
+	const std::string path;
 };
 
 }

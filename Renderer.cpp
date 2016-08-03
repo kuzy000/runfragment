@@ -1,11 +1,13 @@
 #include "Renderer.h"
 
-#include "OnScopeEnd.h"
-
 #include <stdexcept>
 #include <regex>
 #include <fstream>
 #include <iostream>
+
+#include <FreeImagePlus.h>
+
+#include "OnScopeEnd.h"
 
 namespace RunFragment {
 
@@ -86,12 +88,12 @@ Renderer::Renderer(const AppConfig& config, Target target, GLFWwindow* window)
 			glDeleteFramebuffers(1, &fbo);
 		});
 		
-		glGenTextures(1, &tex);
+		glGenTextures(1, &buf);
 		onDestruction.push([this] {
-			glDeleteTextures(1, &tex);
+			glDeleteTextures(1, &buf);
 		});
 	
-		glBindTexture(GL_TEXTURE_2D, tex);
+		glBindTexture(GL_TEXTURE_2D, buf);
 		
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 		
@@ -99,7 +101,40 @@ Renderer::Renderer(const AppConfig& config, Target target, GLFWwindow* window)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, buf, 0);
+	}
+	
+	for(std::size_t i = 0; i < renderConfig.channels.size(); i++) {
+		const Channel* channel = renderConfig.channels[i].get();
+		
+		if(const auto channelImage = dynamic_cast<const ChannelImage*>(channel)) {
+			const auto path = channelImage->path;
+			
+			if(sharedData.texs.find(path) != sharedData.texs.end()) {
+				break;
+			}
+			
+			GLuint tex;
+			glGenTextures(1, &tex); // TODO destruction
+			sharedData.texs.emplace(path, tex);
+			
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, tex);
+			
+			fipImage textureFile;
+			if(!textureFile.load(path.c_str())) {
+				std::cerr << "Error: can't open file '" << path << "'" << std::endl;
+			}
+
+			if(!textureFile.convertTo24Bits()) {
+				std::cerr << path << ": texture converting error" << std::endl;
+			}
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureFile.getWidth(), textureFile.getHeight(), 0, GL_BGR, GL_UNSIGNED_BYTE, textureFile.accessPixels());
+		}
 	}
 }
 
@@ -129,10 +164,23 @@ void Renderer::render() {
 		if(const auto channelBuf = dynamic_cast<const ChannelBuf*>(channel)) {
 			const auto num = static_cast<std::size_t>(channelBuf->kind);
 			
-			glActiveTexture(GL_TEXTURE0 + num);
-			glBindTexture(GL_TEXTURE_2D, sharedData.texs[num]);
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, sharedData.bufs[num]);
 	
-			glUniform1i(iChannels[i], num);
+			glUniform1i(iChannels[i], i);
+		}
+		else if(const auto channelImage = dynamic_cast<const ChannelImage*>(channel)) {
+			const auto path = channelImage->path;
+			
+			auto it = sharedData.texs.find(path);
+			if(it == sharedData.texs.end()) {
+				continue;
+			}
+			
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, it->second);
+			
+			glUniform1i(iChannels[i], i);
 		}
 	}
 	
@@ -252,9 +300,6 @@ void Renderer::reloadShader() {
 }
 
 void Renderer::onWindowResize(int width, int height) {
-	for(GLuint& tex : sharedData.texs) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-	}
 }
 
 GLuint Renderer::compileShader(GLenum type, const std::string& source) {

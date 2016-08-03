@@ -6,6 +6,7 @@
 #include <mutex>
 #include <chrono>
 #include <array>
+#include <map>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -41,15 +42,18 @@ private:
 	GLFWwindow* window;
 	
 	struct SharedData {
-		std::array<GLuint, 4> texs {{0}};
+		std::array<GLuint, 4> bufs {{0}};
+		std::map<std::string, GLuint> texs;
 	};
 	static SharedData sharedData;
+	
+	GLuint img = 0;
 	
 	GLuint vao = 0;
 	GLuint vbo = 0;
 	GLuint ebo = 0;
 	
-	GLuint& tex = sharedData.texs[static_cast<std::size_t>(target)];
+	GLuint& buf = sharedData.bufs[static_cast<std::size_t>(target)];
 	GLuint fbo = 0;
 	
 	GLuint vertex = 0;

@@ -1,22 +1,25 @@
 project(runfragment)
 cmake_minimum_required(VERSION 2.8)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+
 find_package(Boost REQUIRED COMPONENTS program_options filesystem)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(Threads REQUIRED)
 find_package(OpenSSL REQUIRED)
+find_package(FreeImagePlus REQUIRED)
 
-option(CPP-NETLIB_BUILD_TESTS "Build the cpp-netlib project tests." OFF)
-option(CPP-NETLIB_BUILD_EXPERIMENTS "Build the cpp-netlib project experiments." OFF)
-option(CPP-NETLIB_BUILD_EXAMPLES "Build the cpp-netlib project examples." OFF)
+set(CPP-NETLIB_BUILD_TESTS       OFF CACHE BOOL "")
+set(CPP-NETLIB_BUILD_EXPERIMENTS OFF CACHE BOOL "")
+set(CPP-NETLIB_BUILD_EXAMPLES    OFF CACHE BOOL "")
 add_subdirectory(cpp-netlib)
 find_package(cppnetlib REQUIRED)
 
-option(RAPIDJSON_BUILD_DOC "Build rapidjson documentation." OFF)
-option(RAPIDJSON_BUILD_EXAMPLES "Build rapidjson examples." OFF)
-option(RAPIDJSON_BUILD_TESTS "Build rapidjson perftests and unittests." OFF)
+set(RAPIDJSON_BUILD_DOC      OFF CACHE BOOL "")
+set(RAPIDJSON_BUILD_EXAMPLES OFF CACHE BOOL "")
+set(RAPIDJSON_BUILD_TESTS    OFF CACHE BOOL "")
 add_subdirectory(rapidjson)
 find_package(RapidJSON REQUIRED)
 
@@ -30,6 +33,7 @@ include_directories(
 	${CPPNETLIB_INCLUDE_DIRS}
 	${OPENSSL_INCLUDE_DIR}
 	${RAPIDJSON_INCLUDE_DIRS}
+	${FREEIMAGEPLUS_INCLUDE_DIRS}
 	rapidjson/include/ # FIXME
 )
 
@@ -51,4 +55,5 @@ target_link_libraries(${PROJECT_NAME}
 	${OPENSSL_LIBRARIES}
 	${CPPNETLIB_LIBRARIES}
 	${RAPIDJSON_LIBRARIES}
+	${FREEIMAGEPLUS_LIBRARIES}
 )
