@@ -60,7 +60,7 @@ const po::options_description helpOptions = [] {
 	
 	po::options_description other {"Other"};
 	other.add_options()
-		(format.getPo(),             po::value<std::string>(), "Format of uniforms:\n    g : GLSLSandbox\n    s : ShaderToy (default)")
+		(format.getPo(),             po::value<std::string>(), "Format of uniforms:\n    g : GLSLSandbox (default)\n    s : ShaderToy")
 		(time.getPo(),               po::value<float>(),       "Set value that multiplies the time")
 		(main.getPo(),               po::value<std::string>(), "Set name of mainImage(out vec4, in vec2) function; 'none' if not used")
 		(addUniform.getPo(),         po::bool_switch(),        "Add uniforms to beginning of the file")
