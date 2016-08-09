@@ -140,6 +140,7 @@ Renderer::Renderer(const AppConfig& config, Target target, GLFWwindow* window)
 
 void Renderer::start() {
 	startTime = std::chrono::high_resolution_clock::now();
+	prevFrameTime = std::chrono::high_resolution_clock::now();
 }
 
 void Renderer::render() {
@@ -184,8 +185,18 @@ void Renderer::render() {
 		}
 	}
 	
-	GLfloat globalTime = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(std::chrono::high_resolution_clock::now() - startTime).count();
+	auto currentTime = std::chrono::high_resolution_clock::now();
+
+	GLfloat globalTime = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(currentTime - startTime).count();
 	glUniform1f(iGlobalTime, globalTime * config.time);
+	
+	GLfloat timeDelta = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(currentTime - prevFrameTime).count();
+	glUniform1f(iTimeDelta, timeDelta);
+	
+	prevFrameTime = currentTime;
+	
+	glUniform1i(iFrame, frame);
+	frame++;
 	
 	int width;
 	int height;
@@ -230,13 +241,14 @@ void Renderer::reloadFile() {
 		if(config.addUniforms) {
 			ss << "uniform vec2      " + config.iResolution + ";" << std::endl
 			   << "uniform float     " + config.iGlobalTime + ";" << std::endl
-			   << "uniform float     " + config.iGlobalDelta + ";" << std::endl
-			   << "uniform float     " + config.iGlobalFrame + ";" << std::endl
+			   << "uniform float     " + config.iTimeDelta + ";" << std::endl
+			   << "uniform int       " + config.iFrame + ";" << std::endl
+			   << "uniform float     " + config.iFrameRate + ";" << std::endl
 			   << "uniform float     " + config.iChannelTime + "[4];" << std::endl
+			   << "uniform vec3      " + config.iChannelResolution + "[4];" << std::endl
 			   << "uniform vec4      " + config.iMouse + ";" << std::endl
 			   << "uniform vec4      " + config.iDate + ";" << std::endl
 			   << "uniform float     " + config.iSampleRate + ";" << std::endl
-			   << "uniform vec3      " + config.iChannelResolution + "[4];" << std::endl
 			   << "uniform sampler2D " + config.iChannel + "0;" << std::endl
 			   << "uniform sampler2D " + config.iChannel + "1;" << std::endl
 			   << "uniform sampler2D " + config.iChannel + "2;" << std::endl
@@ -282,13 +294,14 @@ void Renderer::reloadShader() {
 
 			iResolution = glGetUniformLocation(program, config.iResolution.c_str());
 			iGlobalTime = glGetUniformLocation(program, config.iGlobalTime.c_str());
-			iGlobalDelta = glGetUniformLocation(program, config.iGlobalDelta.c_str());
-			iGlobalFrame = glGetUniformLocation(program, config.iGlobalFrame.c_str());
+			iTimeDelta = glGetUniformLocation(program, config.iTimeDelta.c_str());
+			iFrame = glGetUniformLocation(program, config.iFrame.c_str());
+			iFrameRate = glGetUniformLocation(program, config.iFrameRate.c_str());
 			iChannelTime = glGetUniformLocation(program, config.iChannelTime.c_str());
+			iChannelResolution = glGetUniformLocation(program, config.iChannelResolution.c_str());
 			iMouse = glGetUniformLocation(program, config.iMouse.c_str());
 			iDate = glGetUniformLocation(program, config.iDate.c_str());
 			iSampleRate = glGetUniformLocation(program, config.iSampleRate.c_str());
-			iChannelResolution = glGetUniformLocation(program, config.iChannelResolution.c_str());
 			iChannels[0] = glGetUniformLocation(program, (config.iChannel + "0").c_str());
 			iChannels[1] = glGetUniformLocation(program, (config.iChannel + "1").c_str());
 			iChannels[2] = glGetUniformLocation(program, (config.iChannel + "2").c_str());

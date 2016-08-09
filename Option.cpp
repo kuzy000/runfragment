@@ -36,13 +36,14 @@ const Parameter addUniform = "add-uniforms";
 
 const Parameter iResolution = "iResolution";
 const Parameter iGlobalTime = "iGlobalTime";
-const Parameter iGlobalDelta = "iGlobalDelta";
-const Parameter iGlobalFrame = "iGlobalFrame";
+const Parameter iTimeDelta = "iTimeDelta";
+const Parameter iFrame = "iFrame";
+const Parameter iFrameRate = "iFrameRate";
 const Parameter iChannelTime = "iChannelTime";
+const Parameter iChannelResolution = "iChannelResolution";
 const Parameter iMouse = "iMouse";
 const Parameter iDate = "iDate";
 const Parameter iSampleRate = "iSampleRate";
-const Parameter iChannelResolution = "iChannelResolution";
 const Parameter iChannel = "iChannel";
 const Parameter iSurfacePosition = "iSurfacePosition";
 
@@ -72,13 +73,14 @@ const po::options_description helpOptions = [] {
 		(addUniform.getPo(),         po::bool_switch(),        "Add uniforms to beginning of the file")
 		(iResolution.getPo(),        po::value<std::string>(), "Set name of iResolution uniform")
 		(iGlobalTime.getPo(),        po::value<std::string>(), "Set name of iGlobalTime uniform")
-//		(iGlobalDelta.getPo(),       po::value<std::string>(), "Set name of iGlobalDelta uniform")
-//		(iGlobalFrame.getPo(),       po::value<std::string>(), "Set name of iGlobalFrame uniform")
+		(iTimeDelta.getPo(),         po::value<std::string>(), "Set name of iTimeDelta uniform")
+		(iFrame.getPo(),             po::value<std::string>(), "Set name of iFrame uniform")
+		(iFrameRate.getPo(),         po::value<std::string>(), "Set name of iFrameRate uniform")
 //		(iChannelTime.getPo(),       po::value<std::string>(), "Set name of iChannelTime uniform")
+//		(iChannelResolution.getPo(), po::value<std::string>(), "Set name of iChannelResolution uniform")
 		(iMouse.getPo(),             po::value<std::string>(), "Set name of iMouse uniform")
 		(iDate.getPo(),              po::value<std::string>(), "Set name of iDate uniform")
 //		(iSampleRate.getPo(),        po::value<std::string>(), "Set name of iSampleRate uniform")
-//		(iChannelResolution.getPo(), po::value<std::string>(), "Set name of iChannelResolution uniform")
 		(iChannel.getPo(),           po::value<std::string>(), "Set name of iChannelN uniform")
 		(iSurfacePosition.getPo(),   po::value<std::string>(), "Set name of iSurfacePosition varying");
 	
@@ -121,13 +123,14 @@ const po::options_description parsingOptions = [] {
 		(addUniform.getPo(),         po::bool_switch(),        "Add uniforms to beginning of the file")
 		(iResolution.getPo(),        po::value<std::string>(), "Set name of iResolution uniform")
 		(iGlobalTime.getPo(),        po::value<std::string>(), "Set name of iGlobalTime uniform")
-		(iGlobalDelta.getPo(),       po::value<std::string>(), "Set name of iGlobalDelta uniform")
-		(iGlobalFrame.getPo(),       po::value<std::string>(), "Set name of iGlobalFrame uniform")
+		(iTimeDelta.getPo(),         po::value<std::string>(), "Set name of iTimeDelta uniform")
+		(iFrame.getPo(),             po::value<std::string>(), "Set name of iFrame uniform")
+		(iFrameRate.getPo(),         po::value<std::string>(), "Set name of iFrameRate uniform")
 		(iChannelTime.getPo(),       po::value<std::string>(), "Set name of iChannelTime uniform")
+		(iChannelResolution.getPo(), po::value<std::string>(), "Set name of iChannelResolution uniform")
 		(iMouse.getPo(),             po::value<std::string>(), "Set name of iMouse uniform")
 		(iDate.getPo(),              po::value<std::string>(), "Set name of iDate uniform")
 		(iSampleRate.getPo(),        po::value<std::string>(), "Set name of iSampleRate uniform")
-		(iChannelResolution.getPo(), po::value<std::string>(), "Set name of iChannelResolution uniform")
 		(iChannel.getPo(),           po::value<std::string>(), "Set name of iChannelN uniform")
 		(iSurfacePosition.getPo(),   po::value<std::string>(), "Set name of iSurfacePosition varying");
 	

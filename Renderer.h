@@ -62,13 +62,14 @@ private:
 	
 	GLint iResolution = -1; // done
 	GLint iGlobalTime = -1; // done
-	GLint iGlobalDelta = -1;
-	GLint iGlobalFrame = -1;
+	GLint iTimeDelta = -1; // done
+	GLint iFrame = -1; // done
+	GLint iFrameRate = -1;
 	GLint iChannelTime = -1;
+	GLint iChannelResolution = -1;
 	GLint iMouse = -1; // done
 	GLint iDate = -1; // done
 	GLint iSampleRate = -1;
-	GLint iChannelResolution = -1;
 	std::array<GLint, 4> iChannels {{-1}}; // done
 	
 	std::mutex sourceChanging;
@@ -77,6 +78,8 @@ private:
 	bool changed = false;
 	
 	std::chrono::high_resolution_clock::time_point startTime;
+	std::chrono::high_resolution_clock::time_point prevFrameTime;
+	GLint frame = 0;
 	
 	OnScopeEnd onDestruction;
 };

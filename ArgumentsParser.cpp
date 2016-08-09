@@ -134,13 +134,14 @@ RunFragment::AppConfig vmToAppConfig(const boost::program_options::variables_map
 
 	config.iResolution        = lookupString(Option::iResolution);
 	config.iGlobalTime        = lookupString(Option::iGlobalTime);
-	config.iGlobalDelta       = lookupString(Option::iGlobalDelta);
-	config.iGlobalFrame       = lookupString(Option::iGlobalFrame);
+	config.iTimeDelta         = lookupString(Option::iTimeDelta);
+	config.iFrame             = lookupString(Option::iFrame);
+	config.iFrameRate         = lookupString(Option::iFrameRate);
 	config.iChannelTime       = lookupString(Option::iChannelTime);
+	config.iChannelResolution = lookupString(Option::iChannelResolution);
 	config.iMouse             = lookupString(Option::iMouse);
 	config.iDate              = lookupString(Option::iDate);
 	config.iSampleRate        = lookupString(Option::iSampleRate);
-	config.iChannelResolution = lookupString(Option::iChannelResolution);
 	config.iChannel           = lookupString(Option::iChannel);
 	config.iSurfacePosition   = lookupString(Option::iSurfacePosition);
 	

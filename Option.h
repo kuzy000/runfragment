@@ -26,13 +26,14 @@ extern const Parameter addUniform;
 
 extern const Parameter iResolution;
 extern const Parameter iGlobalTime;
-extern const Parameter iGlobalDelta;
-extern const Parameter iGlobalFrame;
+extern const Parameter iTimeDelta;
+extern const Parameter iFrame;
+extern const Parameter iFrameRate;
 extern const Parameter iChannelTime;
+extern const Parameter iChannelResolution;
 extern const Parameter iMouse;
 extern const Parameter iDate;
 extern const Parameter iSampleRate;
-extern const Parameter iChannelResolution;
 extern const Parameter iChannel;
 extern const Parameter iSurfacePosition;
 

@@ -11,13 +11,14 @@ add-uniforms = true
 
 iResolution = iResolution
 iGlobalTime = iGlobalTime
-iGlobalDelta = iGlobalDelta
-iGlobalFrame = iGlobalFrame
+iTimeDelta = iTimeDelta
+iFrame = iFrame
+iFrameRate = iFrameRate
 iChannelTime = iChannelTime
+iChannelResolution = iChannelResolution
 iMouse = iMouse
 iDate = iDate
 iSampleRate = iSampleRate
-iChannelResolution = iChannelResolution
 iChannel = iChannel
 iSurfacePosition = iSurfacePosition
 )raw";
@@ -30,13 +31,14 @@ add-uniforms = false
 
 iResolution = resolution
 iGlobalTime = time
-iGlobalDelta = iGlobalDelta
-iGlobalFrame = iGlobalFrame
+iTimeDelta = iTimeDelta
+iFrame = iFrame
+iFrameRate = iFrameRate
 iChannelTime = iChannelTime
+iChannelResolution = iChannelResolution
 iMouse = mouse
 iDate = iDate
 iSampleRate = iSampleRate
-iChannelResolution = iChannelResolution
 iChannel = iChannel
 iSurfacePosition = surfacePosition
 )raw";
