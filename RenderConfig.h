@@ -4,12 +4,17 @@
 #include <array>
 #include <ostream>
 
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
+
 #include "Channel.h"
 
 namespace RunFragment {
 
+namespace fs = boost::filesystem;
+
 struct RenderConfig {
-	RenderConfig(std::string path)
+	RenderConfig(fs::path path)
 		: path {std::move(path)} {}
 	
 	RenderConfig(RenderConfig&&) = default;
@@ -37,7 +42,7 @@ struct RenderConfig {
 		return *this;
 	}
 	
-	std::string path;
+	fs::path path;
 	std::array<std::unique_ptr<Channel>, 4> channels {{nullptr}};
 };
 

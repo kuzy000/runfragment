@@ -2,6 +2,8 @@
 
 #include <fstream>
 
+#include <boost/filesystem.hpp>
+
 #include "Option.h"
 #include "StandartConfig.h"
 #include "Utils.h"
@@ -9,16 +11,46 @@
 namespace RunFragment {
 namespace ArgumentsParser {
 
+namespace po = boost::program_options;
+namespace fs = boost::filesystem;
+
 boost::program_options::variables_map argsToVm(int argc, char* argv[], po::options_description desc) {
 	po::positional_options_description pos;
 	pos.add(Option::image, 1);
 
 	po::variables_map vm;
+	
 	auto parser = po::command_line_parser(argc, argv).options(desc).positional(pos);
 	po::store(parser.run(), vm);
 	
 	if(vm.count(Option::help) || vm.count(Option::download)) {
 		return vm;
+	}
+	
+	if(vm.count(Option::config)) {
+		auto path = vm[Option::config].as<fs::path>();
+		if(!Utils::isFileAccessible(path.string())) {
+			throw std::runtime_error {"can't open config file"};
+		}
+		fs::ifstream file {path};
+		
+		po::variables_map vmConfig;
+		po::store(po::parse_config_file(file, desc, true), vmConfig);  
+		
+		const auto dir = fs::absolute(fs::path {path}).parent_path();
+		for(auto& p : vmConfig) {
+			boost::any& value = p.second.value();
+			if(value.type() == typeid(fs::path)) {
+				value = fs::absolute(boost::any_cast<fs::path>(value), dir);
+			}
+		}
+		
+		vm.insert(vmConfig.begin(), vmConfig.end());
+	}
+	else {
+		if(!vm.count(Option::image)) {
+			throw std::runtime_error {"neither config nor Image specified"};
+		}
 	}
 	
 	if(vm.count(Option::format)) {
@@ -40,20 +72,6 @@ boost::program_options::variables_map argsToVm(int argc, char* argv[], po::optio
 		po::store(po::parse_config_file(ss, desc, true), vm);
 	}
 	
-	if(vm.count(Option::config)) {
-		auto path = vm[Option::config].as<std::string>();
-		if(!Utils::isFileAccessible(path)) {
-			throw std::runtime_error {"can't open config file"};
-		}
-		std::ifstream file {path};
-		po::store(po::parse_config_file(file, desc, true), vm);  
-	}
-	else {
-		if(!vm.count(Option::image)) {
-			throw std::runtime_error {"neither config nor Image specified"};
-		}
-	}
-	
 	return vm;
 }
 
@@ -67,12 +85,25 @@ RunFragment::AppConfig vmToAppConfig(const boost::program_options::variables_map
 		}
 	};
 	
+	const auto lookupOptionalPath = [&vm] (std::string name) -> boost::optional<fs::path> {
+		if(vm.count(name)) {
+			return vm[name].as<fs::path>();
+		}
+		else {
+			return boost::none;
+		}
+	};
+	
 	const auto lookupString = [&vm] (std::string name) -> std::string {
 		return vm[name].as<std::string>();
 	};
 	
-	const auto lookupRenderConfig = [&vm, &lookupOptional] (std::string name, const std::array<Parameter, 4>& optionChannels) -> boost::optional<RenderConfig> {
-		auto path = lookupOptional(name);
+	const auto lookupPath = [&vm] (std::string name) -> fs::path {
+		return vm[name].as<fs::path>();
+	};
+	
+	const auto lookupRenderConfig = [&vm, &lookupOptionalPath] (std::string name, const std::array<Parameter, 4>& optionChannels) -> boost::optional<RenderConfig> {
+		auto path = lookupOptionalPath(name);
 		if(!path) {
 			return boost::none;
 		}

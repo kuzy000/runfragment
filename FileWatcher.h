@@ -5,7 +5,11 @@
 #include <functional>
 #include <thread>
 
+#include <boost/filesystem/path.hpp>
+
 namespace RunFragment {
+
+namespace fs = boost::filesystem;
 
 class FileWatcher {
 	// TODO: Use boost::multi_index for inotify wd storing
@@ -13,7 +17,7 @@ class FileWatcher {
 public:
 	FileWatcher() = default;
 	
-	void add(std::string path, std::function<void()> callback);
+	void add(fs::path path, std::function<void()> callback);
 	std::thread spawn();
 	
 private:

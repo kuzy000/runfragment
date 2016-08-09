@@ -1,9 +1,15 @@
 #include "Option.h"
 
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
+
 #include "AllowedURI.h"
 #include "Channel.h"
 
 namespace RunFragment {
+
+namespace fs = boost::filesystem;
+
 namespace Option {
 
 const Parameter image {"Image", 'i'};
@@ -84,13 +90,13 @@ const po::options_description helpOptions = [] {
 const po::options_description parsingOptions = [] {
 	po::options_description general {"General"};
 	general.add_options()
-		(config.getPo(),   po::value<std::string>(), "Config file")
+		(config.getPo(),   po::value<fs::path>(), "Config file")
 		(download.getPo(), po::value<AllowedURI*>(),  "Download a project from shadertoy.com or glslsanbox.com")
 		(help.getPo(),                               "Display help message");
 	
 	po::options_description buffersChannels {"Buffers and their channels"};
 	buffersChannels.add_options()
-		(image.getPo(),                     po::value<std::string>(), "Set Image shader file");
+		(image.getPo(),                     po::value<fs::path>(), "Set Image shader file");
 	
 	for(std::size_t i = 0; i < imageChannels.size(); i++) {
 		buffersChannels.add_options()
@@ -99,7 +105,7 @@ const po::options_description parsingOptions = [] {
 	
 	for(std::size_t i = 0; i < bufs.size(); i++) {
 		buffersChannels.add_options()
-			(bufs.at(i).getPo(), po::value<std::string>());
+			(bufs.at(i).getPo(), po::value<fs::path>());
 		
 		for(std::size_t j = 0; j < std::tuple_size<decltype(bufChannels)::value_type>::value; j++) {
 			buffersChannels.add_options()

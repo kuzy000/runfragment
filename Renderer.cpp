@@ -222,7 +222,7 @@ void Renderer::render() {
 void Renderer::reloadFile() {
 	std::lock_guard<std::mutex> guard {sourceChanging};
 	
-	std::ifstream file {renderConfig.path};
+	std::ifstream file {renderConfig.path.string()};
 	
 	if(file.is_open()) {
 		std::stringstream ss;

@@ -9,8 +9,8 @@
 
 namespace RunFragment {
 
-void FileWatcher::add(std::string path, std::function<void()> callback) {
-	pathOnChange.emplace(std::move(path), std::move(callback));
+void FileWatcher::add(fs::path path, std::function<void()> callback) {
+	pathOnChange.emplace(std::move(path.string()), std::move(callback));
 }
 
 std::thread FileWatcher::spawn() {

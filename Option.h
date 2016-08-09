@@ -4,6 +4,7 @@
 
 #include <string>
 #include <array>
+
 #include <boost/program_options/options_description.hpp>
 
 namespace RunFragment {
@@ -40,4 +41,3 @@ extern const boost::program_options::options_description parsingOptions;
 
 }
 }
-
