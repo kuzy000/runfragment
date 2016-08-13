@@ -8,10 +8,14 @@
 #include <array>
 #include <map>
 
+#include <boost/filesystem/path.hpp>
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 namespace RunFragment {
+
+namespace fs = boost::filesystem;
 
 class Renderer {
 public:
@@ -43,7 +47,7 @@ private:
 	
 	struct SharedData {
 		std::array<GLuint, 4> bufs {{0}};
-		std::map<std::string, GLuint> texs;
+		std::map<fs::path, GLuint> texs;
 	};
 	static SharedData sharedData;
 	

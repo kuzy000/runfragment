@@ -5,6 +5,8 @@
 #include <regex>
 #include <iostream>
 
+#include <boost/filesystem/operations.hpp>
+
 namespace RunFragment {
 
 std::unique_ptr<Channel> Channel::fromString(std::string str) {
@@ -28,7 +30,7 @@ Channel* Channel::fromStringRaw(std::string str) {
 		const bool flipped = match.str(3) != "";
 		const auto path = match.str(1) + match.str(2);
 		
-		return new ChannelImage {path, flipped};
+		return new ChannelImage {fs::absolute(fs::path{path}), flipped};
 	}
 
 	return nullptr;

@@ -34,16 +34,14 @@ boost::program_options::variables_map argsToVm(int argc, char* argv[], po::optio
 		}
 		fs::ifstream file {path};
 		
-		po::variables_map vmConfig;
-		po::store(po::parse_config_file(file, desc, true), vmConfig);  
 		
 		const auto dir = fs::absolute(fs::path {path}).parent_path();
-		for(auto& p : vmConfig) {
-			boost::any& value = p.second.value();
-			if(value.type() == typeid(fs::path)) {
-				value = fs::absolute(boost::any_cast<fs::path>(value), dir);
-			}
-		}
+		const auto current = fs::current_path();
+		
+		fs::current_path(dir);
+		po::variables_map vmConfig;
+		po::store(po::parse_config_file(file, desc, true), vmConfig);  
+		fs::current_path(current);
 		
 		vm.insert(vmConfig.begin(), vmConfig.end());
 	}

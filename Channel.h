@@ -4,7 +4,11 @@
 #include <string>
 #include <boost/program_options.hpp>
 
+#include <boost/filesystem/path.hpp>
+
 namespace RunFragment {
+
+namespace fs = boost::filesystem;
 
 class Channel {
 public:
@@ -29,10 +33,10 @@ public:
 
 class ChannelImage : public Channel {
 public:
-	ChannelImage(std::string path, bool flipped)
+	ChannelImage(fs::path path, bool flipped)
 		: path {std::move(path)}, flipped {flipped} {}
 	
-	const std::string path;
+	const fs::path path;
 	const bool flipped;
 };
 

@@ -6,7 +6,7 @@
 #include "AllowedURI.h"
 #include "Channel.h"
 
-#include "_boost_po_fs_path_bug_workaround.h"
+#include "boost_filesystem_path_validation.h"
 
 namespace RunFragment {
 
