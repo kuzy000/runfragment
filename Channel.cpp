@@ -3,6 +3,7 @@
 #include <array>
 #include <algorithm>
 #include <regex>
+#include <iostream>
 
 namespace RunFragment {
 
@@ -20,10 +21,14 @@ Channel* Channel::fromStringRaw(std::string str) {
 		return new ChannelBuf {kind};
 	}
 	
-	std::regex re {"^.*\\.(png|jpg|jpeg|tiff|gif|tga)$"};
+	std::regex re {"^(.*\\.)(png|jpg|jpeg|tiff|gif|tga)(:flip)?$"};
 	
-	if(std::regex_match(str, re)) {
-		return new ChannelImage {str};
+	std::smatch match;
+	if(std::regex_match(str, match, re)) {
+		const bool flipped = match.str(3) != "";
+		const auto path = match.str(1) + match.str(2);
+		
+		return new ChannelImage {path, flipped};
 	}
 
 	return nullptr;

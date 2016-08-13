@@ -129,6 +129,10 @@ Renderer::Renderer(const AppConfig& config, Target target, GLFWwindow* window)
 			if(!textureFile.convertTo24Bits()) {
 				std::cerr << path << ": texture converting error" << std::endl;
 			}
+			
+			if(channelImage->flipped) {
+				textureFile.flipVertical();
+			}
 
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

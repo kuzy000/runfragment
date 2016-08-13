@@ -29,10 +29,11 @@ public:
 
 class ChannelImage : public Channel {
 public:
-	ChannelImage(std::string path)
-		: path {std::move(path)} {}
+	ChannelImage(std::string path, bool flipped)
+		: path {std::move(path)}, flipped {flipped} {}
 	
 	const std::string path;
+	const bool flipped;
 };
 
 }
