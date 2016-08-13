@@ -92,15 +92,15 @@ const po::options_description helpOptions = [] {
 } ();
 
 const po::options_description parsingOptions = [] {
-	po::options_description general {"General"};
+	po::options_description general;
 	general.add_options()
-		(config.getPo(),   po::value<fs::path>(), "Config file")
-		(download.getPo(), po::value<AllowedURI*>(),  "Download a project from shadertoy.com or glslsanbox.com")
-		(help.getPo(),                               "Display help message");
+		(config.getPo(),   po::value<fs::path>())
+		(download.getPo(), po::value<AllowedURI*>())
+		(help.getPo(), "");
 	
-	po::options_description buffersChannels {"Buffers and their channels"};
+	po::options_description buffersChannels;
 	buffersChannels.add_options()
-		(image.getPo(),                     po::value<fs::path>(), "Set Image shader file");
+		(image.getPo(), po::value<fs::path>());
 	
 	for(std::size_t i = 0; i < imageChannels.size(); i++) {
 		buffersChannels.add_options()
@@ -117,24 +117,24 @@ const po::options_description parsingOptions = [] {
 		}
 	}
 	
-	po::options_description other {"Other"};
+	po::options_description other;
 	other.add_options()
-		(format.getPo(),             po::value<std::string>(), "Format of uniforms:\n    g : GLSLSandbox\n    s : ShaderToy (default)")
-		(time.getPo(),               po::value<float>(),       "Set value that multiplies the time")
-		(main.getPo(),               po::value<std::string>(), "Set name of mainImage(out vec4, in vec2) function; 'none' if not used")
-		(addUniform.getPo(),         po::bool_switch(),        "Add uniforms to beginning of the file")
-		(iResolution.getPo(),        po::value<std::string>(), "Set name of iResolution uniform")
-		(iGlobalTime.getPo(),        po::value<std::string>(), "Set name of iGlobalTime uniform")
-		(iTimeDelta.getPo(),         po::value<std::string>(), "Set name of iTimeDelta uniform")
-		(iFrame.getPo(),             po::value<std::string>(), "Set name of iFrame uniform")
-		(iFrameRate.getPo(),         po::value<std::string>(), "Set name of iFrameRate uniform")
-		(iChannelTime.getPo(),       po::value<std::string>(), "Set name of iChannelTime uniform")
-		(iChannelResolution.getPo(), po::value<std::string>(), "Set name of iChannelResolution uniform")
-		(iMouse.getPo(),             po::value<std::string>(), "Set name of iMouse uniform")
-		(iDate.getPo(),              po::value<std::string>(), "Set name of iDate uniform")
-		(iSampleRate.getPo(),        po::value<std::string>(), "Set name of iSampleRate uniform")
-		(iChannel.getPo(),           po::value<std::string>(), "Set name of iChannelN uniform")
-		(iSurfacePosition.getPo(),   po::value<std::string>(), "Set name of iSurfacePosition varying");
+		(format.getPo(),             po::value<std::string>())
+		(time.getPo(),               po::value<float>())
+		(main.getPo(),               po::value<std::string>())
+		(addUniform.getPo(),         po::bool_switch())
+		(iResolution.getPo(),        po::value<std::string>())
+		(iGlobalTime.getPo(),        po::value<std::string>())
+		(iTimeDelta.getPo(),         po::value<std::string>())
+		(iFrame.getPo(),             po::value<std::string>())
+		(iFrameRate.getPo(),         po::value<std::string>())
+		(iChannelTime.getPo(),       po::value<std::string>())
+		(iChannelResolution.getPo(), po::value<std::string>())
+		(iMouse.getPo(),             po::value<std::string>())
+		(iDate.getPo(),              po::value<std::string>())
+		(iSampleRate.getPo(),        po::value<std::string>())
+		(iChannel.getPo(),           po::value<std::string>())
+		(iSurfacePosition.getPo(),   po::value<std::string>());
 	
 	po::options_description desc;
 	desc.add(general).add(buffersChannels).add(other);
