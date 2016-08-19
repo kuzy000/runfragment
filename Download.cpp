@@ -67,6 +67,11 @@ void fromURI(const RunFragment::AllowedURI* location) {
 		Document document;
 		if(!document.Parse(response.body().c_str()).HasParseError()) {
 			namespace fs = boost::filesystem;
+			
+			if(document["Error"].IsString()) {
+				std::cout << "Shadertoy.com API error: " << document["Error"].GetString() << std::endl;
+				return;
+			}
 		
 			const ShadertoyJSON data {document};
 			
