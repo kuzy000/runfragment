@@ -101,7 +101,12 @@ void fromURI(const RunFragment::AllowedURI* location) {
 				std::unordered_map<std::size_t, std::string> idBufferMap;
 				
 				for(const auto& pass : data.renderpass) {
-					auto it = nameBufPathMap.find(pass.name);
+					auto name = pass.name;
+					if(name == "") {
+						name = "Image";
+					}
+					
+					auto it = nameBufPathMap.find(name);
 					if(it != nameBufPathMap.end()) {
 						const auto& buf  = it->second.first;
 						const auto& path = it->second.second;
@@ -126,7 +131,12 @@ void fromURI(const RunFragment::AllowedURI* location) {
 				std::unordered_map<std::string, fs::path> downloadPathDirPath;
 				
 				for(const auto& pass : data.renderpass) {
-					auto it = nameBufPathMap.find(pass.name);
+					auto name = pass.name;
+					if(name == "") {
+						name = "Image";
+					}
+					
+					auto it = nameBufPathMap.find(name);
 					if(it != nameBufPathMap.end()) {
 						const auto& buf  = it->second.first;
 						
