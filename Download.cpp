@@ -130,7 +130,7 @@ void fromURI(const RunFragment::AllowedURI* location) {
 								// FIXME: remove at
 								ofsConfig << buf << "-c" << input.channel << " = " << idBufferMap.at(input.id) << std::endl;
 							}
-							if(input.ctype == "texture") {
+							else if(input.ctype == "texture") {
 								const std::string src = input.src;
 								const fs::path path = src.substr(src.find_last_of('/') + 1);
 								
