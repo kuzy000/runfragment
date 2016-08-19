@@ -10,7 +10,7 @@
 namespace RunFragment {
 
 void FileWatcher::add(fs::path path, std::function<void()> callback) {
-	pathOnChange.emplace(std::move(path.string()), std::move(callback));
+	pathOnChange.emplace(path.string(), std::move(callback));
 }
 
 std::thread FileWatcher::spawn() {
@@ -43,7 +43,7 @@ void FileWatcher::run() {
 	}
 	
 	while(true) {
-		const size_t bufferLength = (sizeof(inotify_event) + NAME_MAX + 1) * 10;
+		const size_t bufferLength = (sizeof(inotify_event) + PATH_MAX + 1) * 10;
 		char buffer[bufferLength];
 	
 		auto numRead = read(fd, buffer, bufferLength);

@@ -55,8 +55,7 @@ const po::options_description helpOptions = [] {
 	po::options_description general {"General"};
 	general.add_options()
 		(config.getPo(),   po::value<std::string>(), "Config file")
-//		(download.getPo(), po::value<AllowedURI*>(),  "Download a project from shadertoy.com or glslsanbox.com")
-		(download.getPo(), po::value<AllowedURI*>(),  "Download a project from glslsanbox.com")
+		(download.getPo(), po::value<AllowedURI*>(), "Download a project from shadertoy.com or glslsanbox.com")
 		(help.getPo(),                               "Display help message");
 	
 	po::options_description buffersChannels {"Buffers and their channels"};

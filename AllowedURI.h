@@ -20,6 +20,7 @@ public:
 };
 
 class GLSLSandboxURI : public AllowedURI {
+public:
 	using AllowedURI::AllowedURI;
 };
 

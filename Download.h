@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "AllowedURI.h"
 
 namespace RunFragment {
