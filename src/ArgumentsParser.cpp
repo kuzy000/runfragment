@@ -28,7 +28,7 @@ boost::program_options::variables_map argsToVm(int argc, char* argv[], po::optio
 	}
 	
 	if(vm.count(Option::config)) {
-		auto path = vm[Option::config].as<fs::path>();
+		const auto path = vm[Option::config].as<fs::path>();
 		if(!Utils::isFileAccessible(path.string())) {
 			throw std::runtime_error {"can't open config file"};
 		}
@@ -52,7 +52,7 @@ boost::program_options::variables_map argsToVm(int argc, char* argv[], po::optio
 	}
 	
 	if(vm.count(Option::format)) {
-		auto arg = vm[Option::format].as<std::string>();
+		const auto arg = vm[Option::format].as<std::string>();
 		if(arg == "s") {
 			std::istringstream ss {StandartConfig::shaderToy};
 			po::store(po::parse_config_file(ss, desc, true), vm);

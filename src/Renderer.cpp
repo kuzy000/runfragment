@@ -177,7 +177,7 @@ void Renderer::render() {
 		else if(const auto channelImage = dynamic_cast<const ChannelImage*>(channel)) {
 			const auto path = channelImage->path;
 			
-			auto it = sharedData.texs.find(path);
+			const auto it = sharedData.texs.find(path);
 			if(it == sharedData.texs.end()) {
 				continue;
 			}
@@ -189,12 +189,12 @@ void Renderer::render() {
 		}
 	}
 	
-	auto currentTime = std::chrono::high_resolution_clock::now();
+	const auto currentTime = std::chrono::high_resolution_clock::now();
 
-	GLfloat globalTime = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(currentTime - startTime).count();
+	const GLfloat globalTime = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(currentTime - startTime).count();
 	glUniform1f(iGlobalTime, globalTime * config.time);
 	
-	GLfloat timeDelta = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(currentTime - prevFrameTime).count();
+	const GLfloat timeDelta = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(currentTime - prevFrameTime).count();
 	glUniform1f(iTimeDelta, timeDelta);
 	
 	prevFrameTime = currentTime;
@@ -212,12 +212,13 @@ void Renderer::render() {
 	glfwGetCursorPos(window, &x, &y);
 	glUniform2f(iMouse, static_cast<GLfloat>(1. - x / width), static_cast<GLfloat>(y / height));
 	
-	time_t stamp = time(nullptr);
-	tm* now = localtime(&stamp);
-	GLfloat year = now->tm_year + 1900;
-	GLfloat month = now->tm_mon;
-	GLfloat day = now->tm_mday;
-	GLfloat sec = [] {
+	const time_t stamp = time(nullptr);
+	const tm* const now = localtime(&stamp);
+	
+	const GLfloat year = now->tm_year + 1900;
+	const GLfloat month = now->tm_mon;
+	const GLfloat day = now->tm_mday;
+	const GLfloat sec = [] {
 		time_t t1, t2;
 		struct tm tms;
 		time(&t1);
@@ -243,20 +244,20 @@ void Renderer::reloadFile() {
 		std::stringstream ss;
 		
 		if(config.addUniforms) {
-			ss << "uniform vec2      " + config.iResolution + ";" << std::endl
-			   << "uniform float     " + config.iGlobalTime + ";" << std::endl
-			   << "uniform float     " + config.iTimeDelta + ";" << std::endl
-			   << "uniform int       " + config.iFrame + ";" << std::endl
-			   << "uniform float     " + config.iFrameRate + ";" << std::endl
-			   << "uniform float     " + config.iChannelTime + "[4];" << std::endl
-			   << "uniform vec3      " + config.iChannelResolution + "[4];" << std::endl
-			   << "uniform vec4      " + config.iMouse + ";" << std::endl
-			   << "uniform vec4      " + config.iDate + ";" << std::endl
-			   << "uniform float     " + config.iSampleRate + ";" << std::endl
-			   << "uniform sampler2D " + config.iChannel + "0;" << std::endl
-			   << "uniform sampler2D " + config.iChannel + "1;" << std::endl
-			   << "uniform sampler2D " + config.iChannel + "2;" << std::endl
-			   << "uniform sampler2D " + config.iChannel + "3;" << std::endl;
+			ss << "uniform vec2      " << config.iResolution << ";" << std::endl
+			   << "uniform float     " << config.iGlobalTime << ";" << std::endl
+			   << "uniform float     " << config.iTimeDelta << ";" << std::endl
+			   << "uniform int       " << config.iFrame << ";" << std::endl
+			   << "uniform float     " << config.iFrameRate << ";" << std::endl
+			   << "uniform float     " << config.iChannelTime << "[4];" << std::endl
+			   << "uniform vec3      " << config.iChannelResolution << "[4];" << std::endl
+			   << "uniform vec4      " << config.iMouse << ";" << std::endl
+			   << "uniform vec4      " << config.iDate << ";" << std::endl
+			   << "uniform float     " << config.iSampleRate << ";" << std::endl
+			   << "uniform sampler2D " << config.iChannel << "0;" << std::endl
+			   << "uniform sampler2D " << config.iChannel << "1;" << std::endl
+			   << "uniform sampler2D " << config.iChannel << "2;" << std::endl
+			   << "uniform sampler2D " << config.iChannel << "3;" << std::endl;
 		}
 		
 		ss << file.rdbuf();
@@ -264,7 +265,7 @@ void Renderer::reloadFile() {
 		if(config.main != boost::none) {
 			ss << 
 				"void main() {\n"
-					<< *config.main + "(gl_FragColor, gl_FragCoord);\n"
+					<< *config.main << "(gl_FragColor, gl_FragCoord);\n"
 				"}\n";
 		}
 		
@@ -280,7 +281,7 @@ void Renderer::reloadShader() {
 	std::lock_guard<std::mutex> guard {sourceChanging};
 
 	if(changed) {
-		GLuint newFragment = compileShader(GL_FRAGMENT_SHADER, fragmentSource);
+		const GLuint newFragment = compileShader(GL_FRAGMENT_SHADER, fragmentSource);
 		if(newFragment != 0) {
 			std::cout << target << " [ " << renderConfig.path << " ]: OK" << std::endl;
 			if(fragment != 0) {
@@ -320,16 +321,16 @@ void Renderer::onWindowResize(int width, int height) {
 }
 
 GLuint Renderer::compileShader(GLenum type, const std::string& source) {
-	GLuint id = glCreateShader(type);
+	const GLuint id = glCreateShader(type);
 
-	const char* cStr = source.c_str();
+	const auto cStr = source.c_str();
 	glShaderSource(id, 1, &cStr, nullptr);
 	glCompileShader(id);
 
 	GLint success;
 	glGetShaderiv(id, GL_COMPILE_STATUS, &success);
 	if(success == GL_FALSE) {
-		GLint length = 1024;
+		GLint length;
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
 
 		if(length == 0) { 
@@ -342,14 +343,14 @@ GLuint Renderer::compileShader(GLenum type, const std::string& source) {
 		std::cerr << target << " [ " << renderConfig.path << " ]:" << std::endl;
 		std::cerr << errorLog.get() << std::endl;
 
-		id = 0;
+		return 0;
 	}
 
 	return id;
 }
 
 std::ostream& operator <<(std::ostream& os, Renderer::Target target) {
-	std::array<std::string, 5> targets {{ "Image",  "BufA",  "BufB",  "BufC", "BufD" }};
+	const std::array<std::string, 5> targets {{ "Image",  "BufA",  "BufB",  "BufC", "BufD" }};
 	os << targets.at(static_cast<std::size_t>(target) + 1);
 	
 	return os;

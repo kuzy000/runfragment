@@ -38,7 +38,7 @@ Application::Application(AppConfig configMoved)
 	glfwMakeContextCurrent(window);
 	
 	glewExperimental = true;
-	GLenum status = glewInit();
+	const GLenum status = glewInit();
 	if(status != GLEW_OK) {
 		std::stringstream ss;
 		ss << "Failed to initialize GLEW" << std::endl;
@@ -62,7 +62,7 @@ Application::Application(AppConfig configMoved)
 void Application::run() {
 	FileWatcher fileWatcher;
 	
-	auto watchIfDefined = [&fileWatcher] (const boost::optional<std::string>& channel, Renderer* renderer) {
+	const auto watchIfDefined = [&fileWatcher] (const boost::optional<std::string>& channel, Renderer* renderer) {
 		if(renderer) {
 			fileWatcher.add(*channel, [renderer] {
 				renderer->reloadFile();

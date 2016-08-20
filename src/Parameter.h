@@ -36,8 +36,8 @@ public:
 	}
 	
 private:
-	std::string value;
-	std::string boostPoValue;
+	const std::string value;
+	const std::string boostPoValue;
 };
 
 }

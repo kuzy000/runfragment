@@ -14,16 +14,16 @@ std::unique_ptr<Channel> Channel::fromString(std::string str) {
 }
 
 Channel* Channel::fromStringRaw(std::string str) {
-	std::array<std::string, 4> bufs {{ "BufA", "BufB", "BufC", "BufD" }};
+	const std::array<std::string, 4> bufs {{ "BufA", "BufB", "BufC", "BufD" }};
 	const auto it = std::find(bufs.begin(), bufs.end(), std::move(str));
 
 	if(it != bufs.end()) {
-		auto kind = static_cast<ChannelBuf::Kind>(std::distance(bufs.begin(), it));
+		const auto kind = static_cast<ChannelBuf::Kind>(std::distance(bufs.begin(), it));
 		
 		return new ChannelBuf {kind};
 	}
 	
-	std::regex re {"^(.*\\.)(png|jpg|jpeg|tiff|gif|tga)(:flip)?$"};
+	const std::regex re {"^(.*\\.)(png|jpg|jpeg|tiff|gif|tga)(:flip)?$"};
 	
 	std::smatch match;
 	if(std::regex_match(str, match, re)) {
@@ -46,7 +46,7 @@ void validate(boost::any& value, const std::vector<std::string>& args, Channel**
 		return;
 	}
 	
-	auto channel = Channel::fromStringRaw(arg);
+	const auto channel = Channel::fromStringRaw(arg);
 	
 	if(channel) {
 		value = boost::any {std::move(channel)};

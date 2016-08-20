@@ -23,21 +23,21 @@ void fromURI(const RunFragment::AllowedURI* location) {
 	using namespace rapidjson;
 	
 	if(dynamic_cast<const GLSLSandboxURI*>(location)) {
-		auto fragment = location->fragment();
+		const auto fragment = location->fragment();
 		uri::uri url {"http://glslsandbox.com/item/" + fragment};
 		
 		http::client client;
 		http::client::request request {url};
 		
 		std::cout << "Downloading using the GLSLSandbox API..." << std::endl;
-		http::client::response response = client.get(request);
+		const http::client::response response = client.get(request);
 
 		
 		Document document;
 		if(!document.Parse(response.body().c_str()).HasParseError()) {
 			const auto code = document["code"].GetString();
 			
-			std::string filename = fragment + ".glsl";
+			const std::string filename = fragment + ".glsl";
 			std::cout << "Saving Image to: " << filename << std::endl;
 			std::ofstream ofs {filename.c_str()};
 			ofs << "// Downloaded from " << location->string() << std::endl << std::endl;
@@ -48,20 +48,20 @@ void fromURI(const RunFragment::AllowedURI* location) {
 		const std::string key {"Nd8KwM"};
 		const auto path = location->path();
 		
-		std::regex shaderIdRegex {"/view/(.*)"};
+		const std::regex shaderIdRegex {"/view/(.*)"};
 		std::smatch shaderIdSmatch;
 		
 		std::regex_search(path.begin(), path.end(), shaderIdSmatch, shaderIdRegex);
 		
 		const std::string shaderId = shaderIdSmatch[1];
 		
-		uri::uri url {"https://www.shadertoy.com/api/v1/shaders/" + shaderId + "?key=" + key};
+		const uri::uri url {"https://www.shadertoy.com/api/v1/shaders/" + shaderId + "?key=" + key};
 		
 		http::client client;
 		http::client::request request {url};
 		
 		std::cout << "Downloading using the Shadertoy.com API..." << std::endl;
-		http::client::response response = client.get(request);
+		const http::client::response response = client.get(request);
 		
 		
 		Document document;
@@ -91,7 +91,7 @@ void fromURI(const RunFragment::AllowedURI* location) {
 				ofsConfig << "format = s" << std::endl;
 				ofsConfig << std::endl;
 				
-				std::unordered_map<std::string, std::pair<std::string, fs::path>> nameBufPathMap {
+				const std::unordered_map<std::string, std::pair<std::string, fs::path>> nameBufPathMap {
 					{"Image", {"Image", fs::path {"Image.glsl"}}},
 					{"Buf A", {"BufA",  fs::path {"BufA.glsl"}}},
 					{"Buf B", {"BufB",  fs::path {"BufB.glsl"}}},
@@ -101,12 +101,9 @@ void fromURI(const RunFragment::AllowedURI* location) {
 				std::unordered_map<std::size_t, std::string> idBufferMap;
 				
 				for(const auto& pass : data.renderpass) {
-					auto name = pass.name;
-					if(name == "") {
-						name = "Image";
-					}
+					const std::string name = name == "" ? "Image" : pass.name;
 					
-					auto it = nameBufPathMap.find(name);
+					const auto it = nameBufPathMap.find(name);
 					if(it != nameBufPathMap.end()) {
 						const auto& buf  = it->second.first;
 						const auto& path = it->second.second;
@@ -131,12 +128,9 @@ void fromURI(const RunFragment::AllowedURI* location) {
 				std::unordered_map<std::string, fs::path> downloadPathDirPath;
 				
 				for(const auto& pass : data.renderpass) {
-					auto name = pass.name;
-					if(name == "") {
-						name = "Image";
-					}
+					const std::string name = name == "" ? "Image" : pass.name;
 					
-					auto it = nameBufPathMap.find(name);
+					const auto it = nameBufPathMap.find(name);
 					if(it != nameBufPathMap.end()) {
 						const auto& buf  = it->second.first;
 						
@@ -165,8 +159,8 @@ void fromURI(const RunFragment::AllowedURI* location) {
 				}
 				const auto wget = [&dir] (std::string src, fs::path path) {
 					http::client client;
-					http::client::request request("https://www.shadertoy.com" + src);
-					http::client::response response = client.get(request);
+					http::client::request request {"https://www.shadertoy.com" + src};
+					const http::client::response response = client.get(request);
 
 					std::cout << "    " << src << ": " << path << std::endl;
 					fs::ofstream ofs {dir / path, std::ios::out | std::ios::binary};

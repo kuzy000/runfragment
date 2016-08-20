@@ -18,7 +18,7 @@ std::thread FileWatcher::spawn() {
 }
 
 void FileWatcher::run() {
-	auto fd = inotify_init();
+	const auto fd = inotify_init();
 	if(fd == -1) {
 		throw std::runtime_error {"inotify_init returned -1"};
 	}
@@ -28,10 +28,9 @@ void FileWatcher::run() {
 	for(Map::iterator it = pathOnChange.begin(); it != pathOnChange.end(); it++) {
 		const std::string& path = it->first;
 		
-		auto wd = inotify_add_watch(fd, path.c_str(), IN_CLOSE_WRITE);
+		const auto wd = inotify_add_watch(fd, path.c_str(), IN_CLOSE_WRITE);
 		if(wd == -1) {
-			bool accessible = Utils::isFileAccessible(path);
-			if(!accessible) {
+			if(!Utils::isFileAccessible(path)) {
 				std::cerr << "Error: can't monitor file '" << path << "'" << std::endl;
 				continue;
 			}
@@ -46,25 +45,24 @@ void FileWatcher::run() {
 		const size_t bufferLength = (sizeof(inotify_event) + PATH_MAX + 1) * 10;
 		char buffer[bufferLength];
 	
-		auto numRead = read(fd, buffer, bufferLength);
+		const auto numRead = read(fd, buffer, bufferLength);
 		if(numRead == 0) {
 			throw std::runtime_error {"read() from inotify fd returned 0"};
 		}
-	
-		if(numRead == -1) {
+		else if(numRead == -1) {
 			throw std::runtime_error {"read() from inotify fd returned -1"};
 		}
 	
 		for(char* p = buffer; p < buffer + numRead; ) {
-			auto event = reinterpret_cast<inotify_event*>(p);
-			auto wd = event->wd;
-			auto it = wdIt.at(wd);
+			const auto event = reinterpret_cast<inotify_event*>(p);
+			const auto wd = event->wd;
+			const auto it = wdIt.at(wd);
 			const std::string& path = it->first;
 			
 			if(event->mask & IN_IGNORED) {
 				inotify_rm_watch(fd, wd);
-				auto newWd = inotify_add_watch(fd, path.c_str(), IN_MODIFY);
-				if(wd == -1) {
+				const auto newWd = inotify_add_watch(fd, path.c_str(), IN_MODIFY);
+				if(newWd == -1) {
 					throw std::runtime_error {"inotify_add_watch returned -1"};
 				}
 				auto itOfWdIt = wdIt.find(wd);
@@ -77,8 +75,8 @@ void FileWatcher::run() {
 		}
 	}
 
-	for(auto pair : wdIt) {
-		auto wd = pair.first;
+	for(const auto pair : wdIt) {
+		const auto wd = pair.first;
 		inotify_rm_watch(fd, wd);
 	}
 	close(fd);
