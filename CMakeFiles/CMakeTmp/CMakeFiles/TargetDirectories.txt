@@ -1,3 +1,0 @@
-/home/kuzy000/dev/runfragment/CMakeFiles/CMakeTmp/CMakeFiles/edit_cache.dir
-/home/kuzy000/dev/runfragment/CMakeFiles/CMakeTmp/CMakeFiles/rebuild_cache.dir
-/home/kuzy000/dev/runfragment/CMakeFiles/CMakeTmp/CMakeFiles/cmTC_77702.dir
