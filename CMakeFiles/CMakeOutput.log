@@ -1,0 +1,138 @@
+The system is: Linux - 4.7.1-1-ARCH - i686
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: /usr/bin/cc 
+Build flags: 
+Id flags: 
+
+The output was:
+0
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
+
+The C compiler identification is GNU, found in "/home/kuzy000/dev/runfragment/CMakeFiles/3.6.1/CompilerIdC/a.out"
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+Compiler: /usr/bin/g++ 
+Build flags: 
+Id flags: 
+
+The output was:
+0
+
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
+
+The CXX compiler identification is GNU, found in "/home/kuzy000/dev/runfragment/CMakeFiles/3.6.1/CompilerIdCXX/a.out"
+
+Determining if the C compiler works passed with the following output:
+Change Dir: /home/kuzy000/dev/runfragment/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_820fe/fast"
+/usr/bin/make -f CMakeFiles/cmTC_820fe.dir/build.make CMakeFiles/cmTC_820fe.dir/build
+make[1]: Entering directory '/home/kuzy000/dev/runfragment/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_820fe.dir/testCCompiler.c.o
+/usr/bin/cc     -o CMakeFiles/cmTC_820fe.dir/testCCompiler.c.o   -c /home/kuzy000/dev/runfragment/CMakeFiles/CMakeTmp/testCCompiler.c
+Linking C executable cmTC_820fe
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_820fe.dir/link.txt --verbose=1
+/usr/bin/cc       CMakeFiles/cmTC_820fe.dir/testCCompiler.c.o  -o cmTC_820fe -rdynamic 
+make[1]: Leaving directory '/home/kuzy000/dev/runfragment/CMakeFiles/CMakeTmp'
+
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: /home/kuzy000/dev/runfragment/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_a8266/fast"
+/usr/bin/make -f CMakeFiles/cmTC_a8266.dir/build.make CMakeFiles/cmTC_a8266.dir/build
+make[1]: Entering directory '/home/kuzy000/dev/runfragment/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_a8266.dir/CMakeCCompilerABI.c.o
+/usr/bin/cc     -o CMakeFiles/cmTC_a8266.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake-3.6/Modules/CMakeCCompilerABI.c
+Linking C executable cmTC_a8266
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a8266.dir/link.txt --verbose=1
+/usr/bin/cc      -v CMakeFiles/cmTC_a8266.dir/CMakeCCompilerABI.c.o  -o cmTC_a8266 -rdynamic  
+Using built-in specs.
+COLLECT_GCC=/usr/bin/cc
+COLLECT_LTO_WRAPPER=/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/lto-wrapper
+Target: i686-pc-linux-gnu
+Configured with: /build/gcc/src/gcc/configure --prefix=/usr --libdir=/usr/lib --libexecdir=/usr/lib --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugs.archlinux.org/ --enable-languages=c,c++,ada,fortran,go,lto,objc,obj-c++ --enable-shared --enable-threads=posix --enable-libmpx --with-system-zlib --with-isl --enable-__cxa_atexit --disable-libunwind-exceptions --enable-clocale=gnu --disable-libstdcxx-pch --disable-libssp --enable-gnu-unique-object --enable-linker-build-id --enable-lto --enable-plugin --enable-install-libiberty --with-linker-hash-style=gnu --enable-gnu-indirect-function --disable-multilib --disable-werror --enable-checking=release
+Thread model: posix
+gcc version 6.1.1 20160802 (GCC) 
+COMPILER_PATH=/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/:/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/:/usr/lib/gcc/i686-pc-linux-gnu/:/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/:/usr/lib/gcc/i686-pc-linux-gnu/
+LIBRARY_PATH=/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/:/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_a8266' '-rdynamic' '-mtune=generic' '-march=pentiumpro'
+ /usr/lib/gcc/i686-pc-linux-gnu/6.1.1/collect2 -plugin /usr/lib/gcc/i686-pc-linux-gnu/6.1.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cc61Q7Fl.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_i386 -export-dynamic -dynamic-linker /lib/ld-linux.so.2 -o cmTC_a8266 /usr/lib/gcc/i686-pc-linux-gnu/6.1.1/../../../crt1.o /usr/lib/gcc/i686-pc-linux-gnu/6.1.1/../../../crti.o /usr/lib/gcc/i686-pc-linux-gnu/6.1.1/crtbegin.o -L/usr/lib/gcc/i686-pc-linux-gnu/6.1.1 -L/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/../../.. CMakeFiles/cmTC_a8266.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/lib/gcc/i686-pc-linux-gnu/6.1.1/crtend.o /usr/lib/gcc/i686-pc-linux-gnu/6.1.1/../../../crtn.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_a8266' '-rdynamic' '-mtune=generic' '-march=pentiumpro'
+make[1]: Leaving directory '/home/kuzy000/dev/runfragment/CMakeFiles/CMakeTmp'
+
+
+Parsed C implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /home/kuzy000/dev/runfragment/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_a8266/fast"]
+  ignore line: [/usr/bin/make -f CMakeFiles/cmTC_a8266.dir/build.make CMakeFiles/cmTC_a8266.dir/build]
+  ignore line: [make[1]: Entering directory '/home/kuzy000/dev/runfragment/CMakeFiles/CMakeTmp']
+  ignore line: [Building C object CMakeFiles/cmTC_a8266.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/usr/bin/cc     -o CMakeFiles/cmTC_a8266.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake-3.6/Modules/CMakeCCompilerABI.c]
+  ignore line: [Linking C executable cmTC_a8266]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a8266.dir/link.txt --verbose=1]
+  ignore line: [/usr/bin/cc      -v CMakeFiles/cmTC_a8266.dir/CMakeCCompilerABI.c.o  -o cmTC_a8266 -rdynamic  ]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/usr/bin/cc]
+  ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/lto-wrapper]
+  ignore line: [Target: i686-pc-linux-gnu]
+  ignore line: [Configured with: /build/gcc/src/gcc/configure --prefix=/usr --libdir=/usr/lib --libexecdir=/usr/lib --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugs.archlinux.org/ --enable-languages=c,c++,ada,fortran,go,lto,objc,obj-c++ --enable-shared --enable-threads=posix --enable-libmpx --with-system-zlib --with-isl --enable-__cxa_atexit --disable-libunwind-exceptions --enable-clocale=gnu --disable-libstdcxx-pch --disable-libssp --enable-gnu-unique-object --enable-linker-build-id --enable-lto --enable-plugin --enable-install-libiberty --with-linker-hash-style=gnu --enable-gnu-indirect-function --disable-multilib --disable-werror --enable-checking=release]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 6.1.1 20160802 (GCC) ]
+  ignore line: [COMPILER_PATH=/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/:/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/:/usr/lib/gcc/i686-pc-linux-gnu/:/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/:/usr/lib/gcc/i686-pc-linux-gnu/]
+  ignore line: [LIBRARY_PATH=/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/:/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_a8266' '-rdynamic' '-mtune=generic' '-march=pentiumpro']
+  link line: [ /usr/lib/gcc/i686-pc-linux-gnu/6.1.1/collect2 -plugin /usr/lib/gcc/i686-pc-linux-gnu/6.1.1/liblto_plugin.so -plugin-opt=/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cc61Q7Fl.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr --hash-style=gnu -m elf_i386 -export-dynamic -dynamic-linker /lib/ld-linux.so.2 -o cmTC_a8266 /usr/lib/gcc/i686-pc-linux-gnu/6.1.1/../../../crt1.o /usr/lib/gcc/i686-pc-linux-gnu/6.1.1/../../../crti.o /usr/lib/gcc/i686-pc-linux-gnu/6.1.1/crtbegin.o -L/usr/lib/gcc/i686-pc-linux-gnu/6.1.1 -L/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/../../.. CMakeFiles/cmTC_a8266.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/lib/gcc/i686-pc-linux-gnu/6.1.1/crtend.o /usr/lib/gcc/i686-pc-linux-gnu/6.1.1/../../../crtn.o]
+    arg [/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/collect2] ==> ignore
+    arg [-plugin] ==> ignore
+    arg [/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/cc61Q7Fl.res] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [--build-id] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [--hash-style=gnu] ==> ignore
+    arg [-m] ==> ignore
+    arg [elf_i386] ==> ignore
+    arg [-export-dynamic] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib/ld-linux.so.2] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_a8266] ==> ignore
+    arg [/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/../../../crt1.o] ==> ignore
+    arg [/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/../../../crti.o] ==> ignore
+    arg [/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/crtbegin.o] ==> ignore
+    arg [-L/usr/lib/gcc/i686-pc-linux-gnu/6.1.1] ==> dir [/usr/lib/gcc/i686-pc-linux-gnu/6.1.1]
+    arg [-L/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/../../..] ==> dir [/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/../../..]
+    arg [CMakeFiles/cmTC_a8266.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [-lgcc] ==> lib [gcc]
+    arg [--as-needed] ==> ignore
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [--no-as-needed] ==> ignore
+    arg [-lc] ==> lib [c]
+    arg [-lgcc] ==> lib [gcc]
+    arg [--as-needed] ==> ignore
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [--no-as-needed] ==> ignore
+    arg [/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/crtend.o] ==> ignore
+    arg [/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/../../../crtn.o] ==> ignore
+  remove lib [gcc]
+  remove lib [gcc_s]
+  remove lib [gcc]
+  remove lib [gcc_s]
+  collapse library dir [/usr/lib/gcc/i686-pc-linux-gnu/6.1.1] ==> [/usr/lib/gcc/i686-pc-linux-gnu/6.1.1]
+  collapse library dir [/usr/lib/gcc/i686-pc-linux-gnu/6.1.1/../../..] ==> [/usr/lib]
+  implicit libs: [c]
+  implicit dirs: [/usr/lib/gcc/i686-pc-linux-gnu/6.1.1;/usr/lib]
+  implicit fwks: []
+
+

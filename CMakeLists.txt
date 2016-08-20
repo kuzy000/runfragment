@@ -1,6 +1,8 @@
 project(runfragment)
 cmake_minimum_required(VERSION 3.1)
 
+set(EXTERNAL_DIR external)
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 find_package(Boost REQUIRED COMPONENTS program_options filesystem)
@@ -14,13 +16,13 @@ find_package(FreeImagePlus REQUIRED)
 set(CPP-NETLIB_BUILD_TESTS       OFF CACHE BOOL "")
 set(CPP-NETLIB_BUILD_EXPERIMENTS OFF CACHE BOOL "")
 set(CPP-NETLIB_BUILD_EXAMPLES    OFF CACHE BOOL "")
-add_subdirectory(cpp-netlib)
+add_subdirectory(${EXTERNAL_DIR}/cpp-netlib)
 find_package(cppnetlib REQUIRED)
 
 set(RAPIDJSON_BUILD_DOC      OFF CACHE BOOL "")
 set(RAPIDJSON_BUILD_EXAMPLES OFF CACHE BOOL "")
 set(RAPIDJSON_BUILD_TESTS    OFF CACHE BOOL "")
-add_subdirectory(rapidjson)
+add_subdirectory(${EXTERNAL_DIR}/rapidjson)
 find_package(RapidJSON REQUIRED)
 
 pkg_search_module(GLFW REQUIRED glfw3)
@@ -30,20 +32,22 @@ include_directories(
 	${OPENGL_INCLUDE_DIRS}
 	${GLEW_INCLUDE_DIRS}
 	${GLFW_INCLUDE_DIRS}
-	${CPPNETLIB_INCLUDE_DIRS}
 	${OPENSSL_INCLUDE_DIR}
-	${RAPIDJSON_INCLUDE_DIRS}
 	${FREEIMAGEPLUS_INCLUDE_DIRS}
-	rapidjson/include/ # FIXME
+	${CPPNETLIB_INCLUDE_DIRS}
+	
+	${RAPIDJSON_INCLUDE_DIRS}
+	${EXTERNAL_DIR}/rapidjson/include/ # FIXME
 )
 
 set(CMAKE_CXX_STANDARD 11)
 
-file(GLOB SOURCES "*.cpp")
-# for QtCreator project tree
-file(GLOB HEADERS "*.h")
+file(GLOB_RECURSE SOURCES "src/*.cpp")
+file(GLOB_RECURSE HEADERS "src/*.h")
 
+# for QtCreator project tree
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+# add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_link_libraries(${PROJECT_NAME}
 	${GLFW_LIBRARIES}
