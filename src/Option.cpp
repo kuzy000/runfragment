@@ -65,7 +65,7 @@ const po::options_description helpOptions = [] {
 	buffersChannels.add_options()
 		(image.getPo(),           po::value<std::string>(), "Set Image shader file")
 		("Buf(A | B | C | D)",            po::value<std::string>(), "Set Buf's shader file; 'none' if not used")
-		("(Image | Buf(A | B | C | D))-c(0 | 1 | 2 | 3)", po::value<std::string>(), "Set Image's or Buf's channel:\n    <image file>[:flip] : image, ':flip' if flipped\n    Buf{A B C D} : buffer as a channel (multipass)");
+		("(Image | Buf(A | B | C | D))-c(0 | 1 | 2 | 3)", po::value<std::string>(), "Set Image's or Buf's channel:\n    <image file>[:flip] : image, ':flip' if flipped\n    Buf(A | B | C | D) : buffer as a channel (multipass)");
 	
 	
 	po::options_description other {"Other"};
