@@ -36,7 +36,7 @@ config.ini:
 format = shadertoy
 
 Image = Image.glsl
-Image-c0 BufA
+Image-c0 = BufA
 
 BufA = BufA.glsl
 ```
