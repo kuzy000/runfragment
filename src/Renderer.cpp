@@ -279,8 +279,6 @@ void Renderer::reloadFile() {
 }
 
 void Renderer::reloadShader() {
-	std::lock_guard<std::mutex> guard {sourceChanging};
-
 	if(changed) {
 		const GLuint newFragment = compileShader(GL_FRAGMENT_SHADER, fragmentSource);
 		if(newFragment != 0) {
