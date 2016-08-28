@@ -7,6 +7,8 @@
 
 #include <boost/filesystem/operations.hpp>
 
+#include "Option.h"
+
 namespace RunFragment {
 
 std::unique_ptr<Channel> Channel::fromString(std::string str) {
@@ -14,7 +16,7 @@ std::unique_ptr<Channel> Channel::fromString(std::string str) {
 }
 
 Channel* Channel::fromStringRaw(std::string str) {
-	const std::array<std::string, 4> bufs {{ "BufA", "BufB", "BufC", "BufD" }};
+	const auto& bufs = Option::bufs;
 	const auto it = std::find(bufs.begin(), bufs.end(), std::move(str));
 
 	if(it != bufs.end()) {
@@ -41,7 +43,7 @@ void validate(boost::any& value, const std::vector<std::string>& args, Channel**
 	
 	const std::string& arg = po::validators::get_single_string(args);
 	
-	if(arg == "none") {
+	if(arg == Option::none) {
 		value = boost::any {static_cast<Channel*>(nullptr)};
 		return;
 	}

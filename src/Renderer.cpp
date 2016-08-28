@@ -8,6 +8,7 @@
 #include <FreeImagePlus.h>
 
 #include "OnScopeEnd.h"
+#include "Option.h"
 
 namespace RunFragment {
 
@@ -348,7 +349,7 @@ GLuint Renderer::compileShader(GLenum type, const std::string& source) {
 }
 
 std::ostream& operator <<(std::ostream& os, Renderer::Target target) {
-	const std::array<std::string, 5> targets {{ "Image",  "BufA",  "BufB",  "BufC", "BufD" }};
+	const std::array<std::string, 5> targets {{ Option::image, Option::bufA, Option::bufB,  Option::bufC, Option::bufD }};
 	os << targets.at(static_cast<std::size_t>(target) + 1);
 	
 	return os;

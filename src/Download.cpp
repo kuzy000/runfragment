@@ -14,6 +14,7 @@
 #include <rapidjson/document.h>
 
 #include "ShadertoyJSON.h"
+#include "Option.h"
 
 namespace RunFragment {
 namespace Download {
@@ -88,15 +89,15 @@ void fromURI(const RunFragment::AllowedURI* location) {
 				ofsConfig << "# Downloaded from " << location->string() << std::endl;
 				ofsConfig << std::endl;
 				
-				ofsConfig << "format = shadertoy" << std::endl;
+				ofsConfig << Option::format << " = shadertoy" << std::endl;
 				ofsConfig << std::endl;
 				
 				const std::unordered_map<std::string, std::pair<std::string, fs::path>> nameBufPathMap {
-					{"Image", {"Image", fs::path {"Image.glsl"}}},
-					{"Buf A", {"BufA",  fs::path {"BufA.glsl"}}},
-					{"Buf B", {"BufB",  fs::path {"BufB.glsl"}}},
-					{"Buf C", {"BufC",  fs::path {"BufC.glsl"}}},
-					{"Buf D", {"BufD",  fs::path {"BufD.glsl"}}},
+					{"Image", {Option::image, fs::path {"Image.glsl"}}},
+					{"Buf A", {Option::bufA,  fs::path {"BufA.glsl"}}},
+					{"Buf B", {Option::bufB,  fs::path {"BufB.glsl"}}},
+					{"Buf C", {Option::bufC,  fs::path {"BufC.glsl"}}},
+					{"Buf D", {Option::bufD,  fs::path {"BufD.glsl"}}},
 				};
 				std::unordered_map<std::size_t, std::string> idBufferMap;
 				

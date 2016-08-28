@@ -50,6 +50,8 @@ const Parameter iSampleRate = "iSampleRate";
 const Parameter iChannel = "iChannel";
 const Parameter iSurfacePosition = "iSurfacePosition";
 
+extern const std::string none = "none";
+
 namespace po = boost::program_options;
 
 const po::options_description helpOptions = [] {

@@ -77,7 +77,7 @@ boost::program_options::variables_map argsToVm(int argc, char* argv[], po::optio
 
 RunFragment::AppConfig vmToAppConfig(const boost::program_options::variables_map& vm) {
 	const auto lookupOptional = [&vm] (std::string name) -> boost::optional<std::string> {
-		if(vm.count(name) && vm[name].as<std::string>() != "none") {
+		if(vm.count(name) && vm[name].as<std::string>() != Option::none) {
 			return vm[name].as<std::string>();
 		}
 		else {

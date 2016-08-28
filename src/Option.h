@@ -36,8 +36,17 @@ extern const Parameter iSampleRate;
 extern const Parameter iChannel;
 extern const Parameter iSurfacePosition;
 
+extern const std::string none;
+
 extern const boost::program_options::options_description helpOptions;
 extern const boost::program_options::options_description parsingOptions;
+
+// aliases
+
+static const Parameter& bufA = bufs.at(0);
+static const Parameter& bufB = bufs.at(1);
+static const Parameter& bufC = bufs.at(2);
+static const Parameter& bufD = bufs.at(3);
 
 }
 }
