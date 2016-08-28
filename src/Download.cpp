@@ -101,7 +101,7 @@ void fromURI(const RunFragment::AllowedURI* location) {
 				std::unordered_map<std::size_t, std::string> idBufferMap;
 				
 				for(const auto& pass : data.renderpass) {
-					const std::string name = name == "" ? "Image" : pass.name;
+					const std::string name = pass.name == "" ? "Image" : pass.name;
 					
 					const auto it = nameBufPathMap.find(name);
 					if(it != nameBufPathMap.end()) {
@@ -124,11 +124,10 @@ void fromURI(const RunFragment::AllowedURI* location) {
 				}
 				ofsConfig << std::endl;
 				
-				std::size_t textureCounter = 0;
 				std::unordered_map<std::string, fs::path> downloadPathDirPath;
 				
 				for(const auto& pass : data.renderpass) {
-					const std::string name = name == "" ? "Image" : pass.name;
+					const std::string name = pass.name == "" ? "Image" : pass.name;
 					
 					const auto it = nameBufPathMap.find(name);
 					if(it != nameBufPathMap.end()) {
