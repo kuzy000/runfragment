@@ -25,10 +25,12 @@ void FileWatcher::run() {
 	
 	std::unordered_map<int, Map::iterator> wdIt;
 	
+	const auto flags = IN_MODIFY;
+	
 	for(Map::iterator it = pathOnChange.begin(); it != pathOnChange.end(); it++) {
 		const std::string& path = it->first;
 		
-		const auto wd = inotify_add_watch(fd, path.c_str(), IN_CLOSE_WRITE);
+		const auto wd = inotify_add_watch(fd, path.c_str(), flags);
 		if(wd == -1) {
 			if(!Utils::isFileAccessible(path)) {
 				std::cerr << "Error: can't monitor file '" << path << "'" << std::endl;
@@ -61,7 +63,7 @@ void FileWatcher::run() {
 			
 			if(event->mask & IN_IGNORED) {
 				inotify_rm_watch(fd, wd);
-				const auto newWd = inotify_add_watch(fd, path.c_str(), IN_MODIFY);
+				const auto newWd = inotify_add_watch(fd, path.c_str(), flags);
 				if(newWd == -1) {
 					throw std::runtime_error {"inotify_add_watch returned -1"};
 				}

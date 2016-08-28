@@ -274,7 +274,7 @@ void Renderer::reloadFile() {
 		changed = true;
 	}
 	else {
-		std::cerr << "Error: can't open file '" << renderConfig.path << "'" << std::endl;
+		std::cerr << "Error: can't open file " << renderConfig.path << std::endl;
 	}
 }
 
