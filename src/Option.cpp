@@ -5,6 +5,7 @@
 
 #include "AllowedURI.h"
 #include "Channel.h"
+#include "Format.h"
 
 #include "boost_filesystem_path_validation.h"
 
@@ -67,7 +68,7 @@ const po::options_description helpOptions = [] {
 	
 	po::options_description other {"Other"};
 	other.add_options()
-		(format.getPo(),             po::value<std::string>(), "Format of the uniforms:\n    g : GLSLSandbox (default)\n    s : ShaderToy")
+		(format.getPo(),             po::value<std::string>(), "Format of the uniforms:\n    (g | glslsandbox) : GLSLSandbox.com (default)\n    (s | shadertoy) : ShaderToy.com")
 		(time.getPo(),               po::value<float>(),       "Set value that multiplies the time")
 		(main.getPo(),               po::value<std::string>(), "Set the name of mainImage(out vec4, in vec2) function; 'none' if not used")
 		(addUniform.getPo(),         po::bool_switch(),        "Add uniforms declaration to beginning of the shader file")
@@ -117,7 +118,7 @@ const po::options_description parsingOptions = [] {
 	
 	po::options_description other;
 	other.add_options()
-		(format.getPo(),             po::value<std::string>())
+		(format.getPo(),             po::value<Format>())
 		(time.getPo(),               po::value<float>())
 		(main.getPo(),               po::value<std::string>())
 		(addUniform.getPo(),         po::bool_switch())

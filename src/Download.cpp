@@ -88,7 +88,7 @@ void fromURI(const RunFragment::AllowedURI* location) {
 				ofsConfig << "# Downloaded from " << location->string() << std::endl;
 				ofsConfig << std::endl;
 				
-				ofsConfig << "format = s" << std::endl;
+				ofsConfig << "format = shadertoy" << std::endl;
 				ofsConfig << std::endl;
 				
 				const std::unordered_map<std::string, std::pair<std::string, fs::path>> nameBufPathMap {

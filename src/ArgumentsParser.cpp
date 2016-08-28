@@ -7,6 +7,7 @@
 #include "Option.h"
 #include "StandartConfig.h"
 #include "Utils.h"
+#include "Format.h"
 
 namespace RunFragment {
 namespace ArgumentsParser {
@@ -52,17 +53,18 @@ boost::program_options::variables_map argsToVm(int argc, char* argv[], po::optio
 	}
 	
 	if(vm.count(Option::format)) {
-		const auto arg = vm[Option::format].as<std::string>();
-		if(arg == "s") {
+		const auto format = vm[Option::format].as<Format>();
+		switch(format) {
+		case Format::ShaderToy: {
 			std::istringstream ss {StandartConfig::shaderToy};
 			po::store(po::parse_config_file(ss, desc, true), vm);
+			break;
 		}
-		else if(arg == "g") {
+		case Format::GLSLSandbox: {
 			std::istringstream ss {StandartConfig::glslSandbox};
 			po::store(po::parse_config_file(ss, desc, true), vm);
+			break;
 		}
-		else {
-			throw po::validation_error {po::validation_error::invalid_option_value, Option::format, arg};
 		}
 	}
 	else {
