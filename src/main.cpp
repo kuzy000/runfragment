@@ -26,7 +26,10 @@ int main(int argc, char* argv[]) {
 	}
 	
 	if(vm.count(Option::help)) {
-		std::cout << "Usage: " << argv[0] << " [options] [Image_shader]" << std::endl;
+		std::cout << "Usage:" << std::endl;
+		std::cout << "  " << argv[0] << "[options] <Image_shader.glsl>" << std::endl;
+		std::cout << "  " << argv[0] << "[options] --Image=<Image_shader.glsl>" << std::endl;
+		std::cout << "  " << argv[0] << "[options] --config=<config_file.ini>" << std::endl;
 		std::cout << Option::helpOptions << std::endl;
 
 		return EXIT_SUCCESS;

@@ -54,36 +54,35 @@ namespace po = boost::program_options;
 const po::options_description helpOptions = [] {
 	po::options_description general {"General"};
 	general.add_options()
-		(config.getPo(),   po::value<std::string>(), "Config file")
+		(config.getPo(),   po::value<std::string>(), "Config file, .ini format where the variables are equals to CLI options")
 		(download.getPo(), po::value<AllowedURI*>(), "Download a project from shadertoy.com or glslsanbox.com")
 		(help.getPo(),                               "Display help message");
 	
 	po::options_description buffersChannels {"Buffers and their channels"};
 	buffersChannels.add_options()
 		(image.getPo(),           po::value<std::string>(), "Set Image shader file")
-		("Image-c{0 1 2 3}",        po::value<std::string>(), "Set Image channel {0 1 2 3}:\n    <image file>[:flip] : image, ':flip'' if flipped\n    Buf{A B C D} : buffer as a channel (multipass)")
-		("Buf{A B C D}",            po::value<std::string>(), "Set Buf{A B C D} shader file; 'none' if not used")
-		("Buf{A B C D}-c{0 1 2 3}", po::value<std::string>(), "Set Buf{A B C D} channel {0 1 2 3}:\n    <image file>[:flip] : image, ':flip' if flipped\n    Buf{A B C D} : buffer as a channel (multipass)");
+		("Buf(A | B | C | D)",            po::value<std::string>(), "Set Buf's shader file; 'none' if not used")
+		("(Image | Buf(A | B | C | D))-c(0 | 1 | 2 | 3)", po::value<std::string>(), "Set Image's or Buf's channel:\n    <image file>[:flip] : image, ':flip' if flipped\n    Buf{A B C D} : buffer as a channel (multipass)");
 	
 	
 	po::options_description other {"Other"};
 	other.add_options()
-		(format.getPo(),             po::value<std::string>(), "Format of uniforms:\n    g : GLSLSandbox (default)\n    s : ShaderToy")
+		(format.getPo(),             po::value<std::string>(), "Format of the uniforms:\n    g : GLSLSandbox (default)\n    s : ShaderToy")
 		(time.getPo(),               po::value<float>(),       "Set value that multiplies the time")
-		(main.getPo(),               po::value<std::string>(), "Set name of mainImage(out vec4, in vec2) function; 'none' if not used")
-		(addUniform.getPo(),         po::bool_switch(),        "Add uniforms to beginning of the file")
-		(iResolution.getPo(),        po::value<std::string>(), "Set name of iResolution uniform")
-		(iGlobalTime.getPo(),        po::value<std::string>(), "Set name of iGlobalTime uniform")
-		(iTimeDelta.getPo(),         po::value<std::string>(), "Set name of iTimeDelta uniform")
-		(iFrame.getPo(),             po::value<std::string>(), "Set name of iFrame uniform")
-		(iFrameRate.getPo(),         po::value<std::string>(), "Set name of iFrameRate uniform")
-//		(iChannelTime.getPo(),       po::value<std::string>(), "Set name of iChannelTime uniform")
-//		(iChannelResolution.getPo(), po::value<std::string>(), "Set name of iChannelResolution uniform")
-		(iMouse.getPo(),             po::value<std::string>(), "Set name of iMouse uniform")
-		(iDate.getPo(),              po::value<std::string>(), "Set name of iDate uniform")
-//		(iSampleRate.getPo(),        po::value<std::string>(), "Set name of iSampleRate uniform")
-		(iChannel.getPo(),           po::value<std::string>(), "Set name of iChannelN uniform")
-		(iSurfacePosition.getPo(),   po::value<std::string>(), "Set name of iSurfacePosition varying");
+		(main.getPo(),               po::value<std::string>(), "Set the name of mainImage(out vec4, in vec2) function; 'none' if not used")
+		(addUniform.getPo(),         po::bool_switch(),        "Add uniforms declaration to beginning of the shader file")
+		(iResolution.getPo(),        po::value<std::string>(), "Set the name of iResolution uniform")
+		(iGlobalTime.getPo(),        po::value<std::string>(), "Set the name of iGlobalTime uniform")
+		(iTimeDelta.getPo(),         po::value<std::string>(), "Set the name of iTimeDelta uniform")
+		(iFrame.getPo(),             po::value<std::string>(), "Set the name of iFrame uniform")
+		(iFrameRate.getPo(),         po::value<std::string>(), "Set the name of iFrameRate uniform")
+//		(iChannelTime.getPo(),       po::value<std::string>(), "Set the name of iChannelTime uniform")
+//		(iChannelResolution.getPo(), po::value<std::string>(), "Set the name of iChannelResolution uniform")
+		(iMouse.getPo(),             po::value<std::string>(), "Set the name of iMouse uniform")
+		(iDate.getPo(),              po::value<std::string>(), "Set the name of iDate uniform")
+//		(iSampleRate.getPo(),        po::value<std::string>(), "Set the name of iSampleRate uniform")
+		(iChannel.getPo(),           po::value<std::string>(), "Set the name of iChannelN uniform")
+		(iSurfacePosition.getPo(),   po::value<std::string>(), "Set the name of iSurfacePosition varying");
 	
 	po::options_description desc;
 	desc.add(general).add(buffersChannels).add(other);
