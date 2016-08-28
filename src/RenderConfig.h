@@ -1,8 +1,6 @@
 #pragma once
 
-#include <string>
 #include <array>
-#include <ostream>
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>

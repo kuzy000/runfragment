@@ -4,8 +4,6 @@
 #include "OnScopeEnd.h"
 #include "Renderer.h"
 
-#include <mutex>
-#include <chrono>
 #include <memory>
 
 #include <GL/glew.h>

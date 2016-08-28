@@ -4,12 +4,8 @@
 
 #include <sstream>
 #include <stdexcept>
-#include <fstream>
 #include <iostream>
 #include <memory>
-#include <regex>
-#include <ctime>
-#include <thread>
 
 #include <boost/optional.hpp>
 
@@ -61,14 +57,6 @@ Application::Application(AppConfig configMoved)
 
 void Application::run() {
 	FileWatcher fileWatcher;
-	
-	const auto watchIfDefined = [&fileWatcher] (const boost::optional<std::string>& channel, Renderer* renderer) {
-		if(renderer) {
-			fileWatcher.add(*channel, [renderer] {
-				renderer->reloadFile();
-			});
-		}
-	};
 	
 	fileWatcher.add(config.image->path, [this] {
 		image->reloadFile();

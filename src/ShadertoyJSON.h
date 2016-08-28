@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include <rapidjson/document.h>
 
 namespace RunFragment {

@@ -333,12 +333,10 @@ GLuint Renderer::compileShader(GLenum type, const std::string& source) {
 		GLint length;
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
 
-		if(length == 0) { 
-			length = 1024;
-		}
+		const std::size_t size = length == 0 ? 1024 : static_cast<std::size_t>(length);
 
-		std::unique_ptr<GLchar[]> errorLog = std::unique_ptr<GLchar[]>(new GLchar[length]);
-		glGetShaderInfoLog(id, sizeof(GLchar) * length, nullptr, errorLog.get());
+		std::unique_ptr<GLchar[]> errorLog = std::unique_ptr<GLchar[]>(new GLchar[size]);
+		glGetShaderInfoLog(id, sizeof(GLchar) * size, nullptr, errorLog.get());
 
 		std::cerr << target << " [ " << renderConfig.path << " ]:" << std::endl;
 		std::cerr << errorLog.get() << std::endl;

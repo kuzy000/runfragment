@@ -12,7 +12,7 @@ namespace po = boost::program_options;
 
 po::variables_map argsToVm(int argc, char* argv[], po::options_description desc);
 
-RunFragment::AppConfig vmToAppConfig(const po::variables_map& vm);
+AppConfig vmToAppConfig(const po::variables_map& vm);
 
 }
 }

@@ -5,6 +5,8 @@
 #include <iterator>
 #include <sstream>
 
+#include <unistd.h>
+
 namespace RunFragment {
 namespace Utils {
 
