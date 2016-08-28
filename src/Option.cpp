@@ -19,13 +19,13 @@ const std::array<Parameter, 4> imageChannels = {{
 	"Image-c0", "Image-c1", "Image-c2", "Image-c3"
 }};
 
-const std::array<Parameter, 4> bufs = {"BufA", "BufB", "BufC", "BufD"};
+const std::array<Parameter, 4> bufs = {{"BufA", "BufB", "BufC", "BufD"}};
 const std::array<std::array<Parameter, 4>, 4> bufChannels = 
 {{
-	{"BufA-c0", "BufA-c1", "BufA-c2", "BufA-c3"},
-	{"BufB-c0", "BufB-c1", "BufB-c2", "BufB-c3"},
-	{"BufC-c0", "BufC-c1", "BufC-c2", "BufC-c3"},
-	{"BufD-c0", "BufD-c1", "BufD-c2", "BufD-c3"},
+	{{"BufA-c0", "BufA-c1", "BufA-c2", "BufA-c3"}},
+	{{"BufB-c0", "BufB-c1", "BufB-c2", "BufB-c3"}},
+	{{"BufC-c0", "BufC-c1", "BufC-c2", "BufC-c3"}},
+	{{"BufD-c0", "BufD-c1", "BufD-c2", "BufD-c3"}},
 }};
 
 const Parameter config {"config", 'c'};
