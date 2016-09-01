@@ -46,6 +46,25 @@ It also has ```--download``` option which can be used to download a shader from 
 ```
 runfragment --download https://www.shadertoy.com/view/MdX3zr
 ```
+## Build
+
+```
+git submodule init 
+git submodule update
+mkdir build
+cd build
+cmake ..
+make
+```
+
+### Requires
+ - CMake 
+ - Boost.Program_options
+ - Boost.Filesystem
+ - GLEW 
+ - GLFW3
+ - OpenSSL
+ - FreeImagePlus
 
 ## Not implimented features
  - Keyboard
