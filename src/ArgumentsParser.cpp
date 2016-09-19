@@ -24,7 +24,7 @@ boost::program_options::variables_map argsToVm(int argc, char* argv[], po::optio
 	auto parser = po::command_line_parser(argc, argv).options(desc).positional(pos);
 	po::store(parser.run(), vm);
 	
-	if(vm.count(Option::help) || vm.count(Option::download)) {
+	if(vm.count(Option::help) || vm.count(Option::download) || vm.count(Option::create)) {
 		return vm;
 	}
 	
@@ -52,24 +52,18 @@ boost::program_options::variables_map argsToVm(int argc, char* argv[], po::optio
 		}
 	}
 	
-	if(vm.count(Option::format)) {
-		const auto format = vm[Option::format].as<Format>();
-		switch(format) {
-		case Format::ShaderToy: {
-			std::istringstream ss {StandartConfig::shaderToy};
-			po::store(po::parse_config_file(ss, desc, true), vm);
-			break;
-		}
-		case Format::GLSLSandbox: {
-			std::istringstream ss {StandartConfig::glslSandbox};
-			po::store(po::parse_config_file(ss, desc, true), vm);
-			break;
-		}
-		}
-	}
-	else {
-		std::istringstream ss {StandartConfig::defaultConfig};
+	const auto format = vm.count(Option::format) ? vm[Option::format].as<Format>() : defaultFormat;
+	switch(format) {
+	case Format::ShaderToy: {
+		std::istringstream ss {StandartConfig::shaderToy};
 		po::store(po::parse_config_file(ss, desc, true), vm);
+		break;
+	}
+	case Format::GLSLSandbox: {
+		std::istringstream ss {StandartConfig::glslSandbox};
+		po::store(po::parse_config_file(ss, desc, true), vm);
+		break;
+	}
 	}
 	
 	return vm;

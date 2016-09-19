@@ -9,6 +9,8 @@ enum class Format {
 	GLSLSandbox,
 };
 
+const auto defaultFormat = Format::GLSLSandbox;
+
 void validate(boost::any& value, const std::vector<std::string>& args, Format*, int);
 
 }

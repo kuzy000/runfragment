@@ -17,6 +17,7 @@ extern const std::array<std::array<Parameter, 4>, 4> bufChannels;
 
 extern const Parameter config;
 extern const Parameter download;
+extern const Parameter create;
 extern const Parameter time;
 extern const Parameter help;
 extern const Parameter format;

@@ -31,6 +31,7 @@ const std::array<std::array<Parameter, 4>, 4> bufChannels =
 
 const Parameter config {"config", 'c'};
 const Parameter download = {"download", 'd'};
+const Parameter create {"create", 'p'};
 const Parameter time {"time", 't'};
 const Parameter help {"help", 'h'};
 const Parameter format {"format", 'f'};
@@ -59,6 +60,7 @@ const po::options_description helpOptions = [] {
 	general.add_options()
 		(config.getPo(),   po::value<std::string>(), "Config file, .ini format where the variables are equals to CLI options")
 		(download.getPo(), po::value<AllowedURI*>(), "Download a project from shadertoy.com or glslsanbox.com")
+		(create.getPo(),   po::value<std::string>(), "Create a project (a directory with a config file and Image shader if '-f s' is given, otherwise a single Image shader)")
 		(help.getPo(),                               "Display help message");
 	
 	po::options_description buffersChannels {"Buffers and their channels"};
@@ -97,6 +99,7 @@ const po::options_description parsingOptions = [] {
 	general.add_options()
 		(config.getPo(),   po::value<fs::path>())
 		(download.getPo(), po::value<AllowedURI*>())
+		(create.getPo(),   po::value<fs::path>())
 		(help.getPo(), "");
 	
 	po::options_description buffersChannels;
