@@ -66,7 +66,7 @@ make
  - OpenSSL
  - FreeImagePlus
 
-## Not implimented features
+## Not implemented features
  - Keyboard
  - iResolution and (probably?) several other uniforms
  - Sound functionality
